@@ -33,4 +33,18 @@ class Member extends Entity
         '*' => true,
         'id' => false,
     ];
+
+    /**
+     * Virtual fields
+     */
+    protected $_virtual = ['full_name'];
+    
+    /**
+     * Return first and last name concatenated
+     * @return string
+     */
+    protected function _getFullName() {
+        return $this->_properties['firstname'] . '  ' .
+                $this->_properties['lastname'];
+    }
 }

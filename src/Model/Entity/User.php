@@ -62,8 +62,6 @@ class User extends Entity
      * @return string
      */
     protected function _getFullName() {
-    	// echo "teste";
-    	// die();
         return $this->_properties['first_name'] . '  ' .
                 $this->_properties['last_name'];
     }

@@ -3,13 +3,13 @@
 <?php $this->end(); ?>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2>Users list</h2>
+        <h2><?= __("Users list") ?></h2>
         <ol class="breadcrumb">
             <li>
-                <a href="<?php echo $this->Url->build('/admin'); ?>">Home</a>
+                <a href="<?php echo $this->Url->build('/admin'); ?>"><?= __("Home") ?></a>
             </li>
             <li class="active">
-                <strong>Users</strong>
+                <strong><?= __("Users") ?></strong>
             </li>
         </ol>
     </div>
@@ -21,7 +21,7 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Listing of Admin Users</h5>
+                    <h5><?= __("List of admin users") ?></h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -39,7 +39,7 @@
                                 <th data-hide="all"><?= $this->Paginator->sort('last_name') ?></th>
                                 <th data-hide="all"><?= $this->Paginator->sort('active') ?></th>
                                 <th data-hide="all"><?= $this->Paginator->sort('created') ?></th>
-                                <th>Action</th>
+                                <th><?= __("Actions") ?></th>
                             </tr>
                         </thead>
                         <tbody>
