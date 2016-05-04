@@ -25,6 +25,8 @@ class UsersTable extends Table
         parent::initialize($config);
 
         $this->table('users');
+        $this->displayField('id');
+        $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
     }
@@ -38,9 +40,8 @@ class UsersTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
-            ->integer('id')
-            ->requirePresence('id', 'create')
-            ->notEmpty('id');
+            ->add('id', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('id', 'create');
 
         $validator
             ->notEmpty('username');
@@ -59,7 +60,18 @@ class UsersTable extends Table
             ->notEmpty('last_name');
 
         $validator
-            ->notEmpty('password');
+            ->requirePresence('password', 'create')
+            ->allowEmpty('password', 'update')
+            ->add('password', [
+                'compare' => [
+                    'rule' => ['compareWith', 'confirm_password'],
+                    'message' => 'Your passwords do not match'
+                ]
+            ]);
+            
+        $validator
+            ->requirePresence('confirm_password', 'create')
+            ->allowEmpty('confirm_password', 'update');
 
         $validator
             ->boolean('active')

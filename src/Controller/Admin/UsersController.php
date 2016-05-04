@@ -25,23 +25,6 @@ class UsersController extends AppController
     }
 
     /**
-     * View method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Network\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $user = $this->Users->get($id, [
-            'contain' => []
-        ]);
-
-        $this->set('user', $user);
-        $this->set('_serialize', ['user']);
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
@@ -60,6 +43,7 @@ class UsersController extends AppController
         }
         $this->set(compact('user'));
         $this->set('_serialize', ['user']);
+        $this->viewBuilder()->template('add_edit_common');
     }
 
     /**
@@ -75,6 +59,11 @@ class UsersController extends AppController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $userPass = $this->request->data('password');
+            if (empty($userPass)){
+                unset($this->request->data['password']);
+                unset($this->request->data['confirm_password']);
+            }
             $user = $this->Users->patchEntity($user, $this->request->data);
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));
@@ -85,6 +74,7 @@ class UsersController extends AppController
         }
         $this->set(compact('user'));
         $this->set('_serialize', ['user']);
+        $this->viewBuilder()->template('add_edit_common');
     }
 
     /**
