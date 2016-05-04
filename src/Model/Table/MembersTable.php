@@ -29,7 +29,7 @@ class MembersTable extends Table
         $this->displayField('id');
         $this->primaryKey('id');
 
-        $this->hasMany('Membership', [
+        $this->hasMany('Memberships', [
             'foreignKey' => 'member_id'
         ]);
     }

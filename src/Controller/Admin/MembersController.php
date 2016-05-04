@@ -60,6 +60,7 @@ class MembersController extends AppController
         }
         $this->set(compact('member'));
         $this->set('_serialize', ['member']);
+        $this->viewBuilder()->template('add_edit_common');
     }
 
     /**
@@ -72,7 +73,7 @@ class MembersController extends AppController
     public function edit($id = null)
     {
         $member = $this->Members->get($id, [
-            'contain' => []
+            'contain' => ['Memberships']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $member = $this->Members->patchEntity($member, $this->request->data);
@@ -85,6 +86,7 @@ class MembersController extends AppController
         }
         $this->set(compact('member'));
         $this->set('_serialize', ['member']);
+        $this->viewBuilder()->template('add_edit_common');
     }
 
     /**
