@@ -74,6 +74,14 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->fallbacks('DashedRoute');
 });
 
+
+// admin prefix routes
+Router::prefix('admin', function ($routes) {
+    $routes->connect('/', ['controller' => 'Members', 'action' => 'index']);
+    $routes->fallbacks('DashedRoute');
+});
+
+
 /**
  * Load all plugin routes.  See the Plugin documentation on
  * how to customize the loading of plugin routes.
