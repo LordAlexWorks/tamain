@@ -24,7 +24,7 @@
                     'action' => 'index'
                     ]); ?>">
                     <i class="fa fa-users"></i> 
-                    <span class="nav-label">Users</span> 
+                    <span class="nav-label"><?= __("Users") ?></span> 
                     <span class="fa arrow"></span>
                 </a>
                 <ul class="nav nav-second-level collapse
@@ -38,7 +38,7 @@
                             class="<?php echo $this->request->controller == 'Users' 
                                     && $this->request->action == 'add'? 'active' : ''; ?>"
                             >
-                            Add New
+                            <?= __("Add New") ?>
                         </a>
                     </li>
                     <li>
@@ -48,7 +48,8 @@
                             ]); ?>"
                             class="<?php echo $this->request->controller == 'Users' 
                                     && $this->request->action == 'index'? 'active' : ''; ?>"
-                            >Users List
+                            >
+                            <?= __("Users List") ?>
                         </a>
                     </li>
                 </ul>
@@ -73,7 +74,7 @@
                             class="<?php echo $this->request->controller == 'Members' 
                                     && $this->request->action == 'add'? 'active' : ''; ?>"
                             >
-                            Add New
+                            <?= __("Add New") ?>
                         </a>
                     </li>
                     <li>
@@ -83,7 +84,8 @@
                             ]); ?>"
                             class="<?php echo $this->request->controller == 'Members' 
                                     && $this->request->action == 'import'? 'active' : ''; ?>"
-                            >Import Members
+                            >
+                            <?= __("Import Members") ?>
                         </a>
                     </li>
                     <li>
@@ -93,7 +95,8 @@
                             ]); ?>"
                             class="<?php echo $this->request->controller == 'Members' 
                                     && $this->request->action == 'index'? 'active' : ''; ?>"
-                            >Members List
+                            >
+                            <?= __("Members List") ?>
                         </a>
                     </li>
                 </ul>

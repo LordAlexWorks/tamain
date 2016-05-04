@@ -1,0 +1,7 @@
+.nav li.active a.active{color: #ffffff;}
+.error-message{color: red;}
+.form-group .required {
+    color: #e02222;
+    font-size: 12px;
+}
+.initial_hide{display: none;}
