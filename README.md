@@ -79,7 +79,7 @@ heroku git:clone -a tamarin
 ```
 
 
-## Create a procfile
+### Create a procfile
 If you don't have a file named **Procfile** (no extensions), create it with the following content:
 
 ```bash
@@ -95,12 +95,12 @@ web: bin/cake server -H XXX.XXX.X.X -p $PORT
 For more information: https://devcenter.heroku.com/articles/procfile
 
 
-## Run heroku locally
+### Run heroku locally
+
 ```bash
 heroku local web -p 5673
 ```
 
-### Access locally
-Go to your browser and access the URL returned from  (e.g. http://localhost:5673).
+Go to your browser and access the URL returned (e.g. http://localhost:5673).
 
 
