@@ -109,4 +109,30 @@ class MembersController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+
+
+    /**
+     * Import from CSV
+     *
+     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     */
+    public function import()
+    {
+        $member = $this->Members->newEntity();
+        if ($this->request->is('post')) {
+
+            $messages = $member->import('adhesion-girlz-in-web_inscrits_20160223.csv');
+            debug($messages);
+
+            $member = $this->Members->patchEntity($member, $this->request->data);
+            if ($this->Members->save($member)) {
+                $this->Flash->success(__('The member has been saved.'));
+                return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The member could not be saved. Please, try again.'));
+            }
+        }
+        $this->set(compact('member'));
+        $this->set('_serialize', ['member']);
+    }
 }
