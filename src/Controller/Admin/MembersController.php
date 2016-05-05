@@ -76,7 +76,13 @@ class MembersController extends AppController
             'contain' => ['Memberships']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $member = $this->Members->patchEntity($member, $this->request->data);
+            echo "<pre>";
+            var_dump($this->request->data);
+            echo "</pre>";
+            // die();
+            $member = $this->Members->patchEntity($member, $this->request->data,
+                ['associated' => ['Memberships']]
+            );
             if ($this->Members->save($member)) {
                 $this->Flash->success(__('The member has been saved.'));
                 return $this->redirect(['action' => 'index']);

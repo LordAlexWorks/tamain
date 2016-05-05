@@ -49,10 +49,10 @@ class MembershipsTable extends Table
             ->add('id', 'valid', ['rule' => 'numeric'])
             ->allowEmpty('id', 'create');
 
-        $validator
-            ->date('expires_on')
-            ->requirePresence('expires_on', 'create')
-            ->notEmpty('expires_on');
+        // $validator
+        //     ->date('expires_on')
+        //     ->requirePresence('expires_on', 'create')
+        //     ->notEmpty('expires_on');
 
         return $validator;
     }
