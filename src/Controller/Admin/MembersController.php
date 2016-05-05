@@ -76,10 +76,6 @@ class MembersController extends AppController
             'contain' => ['Memberships']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            echo "<pre>";
-            var_dump($this->request->data);
-            echo "</pre>";
-            // die();
             $member = $this->Members->patchEntity($member, $this->request->data,
                 ['associated' => ['Memberships']]
             );
