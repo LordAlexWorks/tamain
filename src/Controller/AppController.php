@@ -43,6 +43,30 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
+
+        // Authorization
+        $this->loadComponent('Auth', [
+            'loginRedirect' => [
+                'controller' => 'Members',
+                'action' => 'index',
+                'prefix' => 'admin'
+            ],
+            'authenticate' => [
+                'Form' => [
+                    'finder' => 'auth'
+                ]
+            ],
+        ]);
+    }
+
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+        
+        // Allow public function without prefix ones
+        if (empty($this->request->params['prefix'])) {
+            $this->Auth->allow();
+        }
     }
 
     /**
