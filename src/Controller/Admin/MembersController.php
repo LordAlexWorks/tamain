@@ -122,6 +122,7 @@ class MembersController extends AppController
         if ($this->request->is('post')) {
             $file_upload_data = $this->request->data;
             $file_upload_data['type'] = $this->request->data["file_name"]["type"];
+            $file_upload_data['user_id'] = $this->Auth->user('id');
             $file_upload_data['file_dir'] = $this->Members->getMemberImportUploadDir();
 
             // File upload
