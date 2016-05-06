@@ -117,21 +117,34 @@ class MembersController extends AppController
      */
     public function import()
     {
-        $member = $this->Members->newEntity();
+        $this->loadModel('FileUploads');
+        $file_upload = $this->FileUploads->newEntity();
         if ($this->request->is('post')) {
-            $import_messages = $this->Members->import('adhesion-girlz-in-web_inscrits_20160223.csv');
-            debug($import_messages);
+            $file_upload_data = $this->request->data;
+            $file_upload_data['type'] = $this->request->data["file_name"]["type"];
+            $file_upload_data['file_dir'] = $this->Members->getMemberImportUploadDir();
 
-            $member = $this->Members->patchEntity($member, $this->request->data);
-            if ($this->Members->save($member)) {
-                $this->Flash->success(__('All members have been imported!'));
-                return $this->redirect(['action' => 'index']);
+            // File upload
+            $file_upload = $this->FileUploads->patchEntity($file_upload, $file_upload_data);
+
+            if ($this->FileUploads->save($file_upload)) {
+                // Import members
+                $import_messages = $this->Members->import($file_upload->id);
+                debug($import_messages);
+
+                if (empty($import_messages['errors'])) {
+                    $this->Flash->success(__('All members have been imported!'));
+                    return $this->redirect(['action' => 'index']);
+                }
+                else {
+                    $this->Flash->error(__('Not all members were imported. Please, check your spreadsheet and try again.'));
+                    $this->set(compact('import_messages'));
+                }
             } else {
-                $this->Flash->error(__('The member could not be saved. Please, try again.'));
-                $this->set(compact('import_messages'));
+                $this->Flash->error(__('The file upload was not successful. Please, try again.'));
             }
         }
-        $this->set(compact('member'));
-        $this->set('_serialize', ['member']);
+        $this->set(compact('file_upload'));
+        $this->set('_serialize', ['file_upload']);
     }
 }

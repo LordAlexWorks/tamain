@@ -1,6 +1,6 @@
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2><?php echo $member->isNew() ? __('Add member') : __('Edit member'); ?></h2>
+        <h2><?= __('Import members') ?></h2>
         <ol class="breadcrumb">
             <li>
                 <a href="<?php echo $this->Url->build('/admin'); ?>"><?= __('Home') ?></a>
@@ -26,13 +26,13 @@
         <div class="col-lg-12">
             <h3><?= __("Import members from a CSV file") ?></h3>
             <?php
-            	echo $this->Form->create($member, ['type' => 'file']);
+                echo $this->Form->create($file_upload, ['type' => 'file']);
             ?>
             <fieldset class="form-horizontal">
             	<div class="form-group">
                     <label class="col-sm-2 control-label"><?= __('Members file to import') ?>:</label>
                     <div class="col-sm-10">
-                        <?php  echo $this->Form->input('members_file', [
+                        <?php  echo $this->Form->input('file_name', [
                         	'type' => 'file',
                             'class' => 'form-control file',
                             'label' => null

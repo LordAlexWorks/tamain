@@ -34,6 +34,14 @@ class FileUploadsTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
+
+        // Adds file upload behavior through Proffer plugin
+        $this->addBehavior('Proffer.Proffer', [
+            'file_name' => [
+                'root' => WWW_ROOT,
+                'dir' => 'file_dir',
+            ]
+        ]);
     }
 
     /**
@@ -77,12 +85,28 @@ class FileUploadsTable extends Table
     }
 
     /**
-     * Adds file upload behavior through Proffer plugin
+     * Before entities are created, prevent files with the same name
+     *
+     * @param Event
+     * @param ArrayObject
+     * @param ArrayObject
      */
-    $this->addBehavior('Proffer.Proffer', [
-        'file_name' => [
-            'root' => WWW_ROOT . 'files',
-            'dir' => 'file_dir',
-        ]
-    ]);
+    public function beforeMarshal(\Cake\Event\Event $event, \ArrayObject $data, \ArrayObject $options)
+    {
+        if (isset($data['file_name']["name"])) {
+            $filename_ext = pathinfo($data['file_name']["name"], PATHINFO_EXTENSION);
+            $filename = preg_replace('/^(.*)\.' . $filename_ext . '$/', '$1', $data['file_name']["name"]);
+
+            $number = 0;
+            do {
+                if ($number > 0) {
+                    $data['file_name']["name"] = $filename."_".mt_rand().".".$filename_ext;
+                }
+
+                $same_name_files = $this->findByFileName($data['file_name']["name"]);
+                $number = $same_name_files->count();
+
+            } while($number > 0);
+        }
+    }
 }

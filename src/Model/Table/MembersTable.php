@@ -5,6 +5,7 @@ use App\Model\Entity\Member;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 
 /**
@@ -84,6 +85,15 @@ class MembersTable extends Table
         return $rules;
     }
 
+    /**
+     * Returns name of the default directory for uploading files
+     * related to importing members
+     *
+     * @return string Dir name
+     */
+    public function getMemberImportUploadDir() {
+        return "member_import_files";
+    }
 
     private function convertEncoding( $array ) {
         foreach ( $array as &$value ) {
@@ -91,12 +101,12 @@ class MembersTable extends Table
         }
     }
 
-    public function import($filename) {
-        // $filename = "test.csv";
-        // set the filename to read CSV from
-        $filename = TMP . 'uploads' . DS . 'Members' . DS . $filename;
+    public function import($file_upload_id) {
+        $file_uploads = TableRegistry::get('FileUploads');
+        $members_file = $file_uploads->findById($file_upload_id)->first();
 
-        // echo $filename;
+        // set the filename to read CSV from
+        $filename = $members_file->full_dir . DS . $members_file->file_name;
         
         // create a message container
         $return = array(
