@@ -110,7 +110,6 @@ class MembersController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
-
     /**
      * Import from CSV
      *
@@ -120,16 +119,16 @@ class MembersController extends AppController
     {
         $member = $this->Members->newEntity();
         if ($this->request->is('post')) {
-
-            $messages = $member->import('adhesion-girlz-in-web_inscrits_20160223.csv');
-            debug($messages);
+            $import_messages = $this->Members->import('adhesion-girlz-in-web_inscrits_20160223.csv');
+            debug($import_messages);
 
             $member = $this->Members->patchEntity($member, $this->request->data);
             if ($this->Members->save($member)) {
-                $this->Flash->success(__('The member has been saved.'));
+                $this->Flash->success(__('All members have been imported!'));
                 return $this->redirect(['action' => 'index']);
             } else {
                 $this->Flash->error(__('The member could not be saved. Please, try again.'));
+                $this->set(compact('import_messages'));
             }
         }
         $this->set(compact('member'));

@@ -55,9 +55,10 @@ class MembersTable extends Table
             ->notEmpty('lastname');
 
         $validator
-            ->date('birthdate')
-            ->requirePresence('birthdate', 'create')
-            ->notEmpty('birthdate');
+            ->allowEmpty('birthdate')
+            ->add('published', 'date', [
+                'rule' => 'date'
+            ]);
 
         $validator
             ->email('email')
@@ -65,21 +66,7 @@ class MembersTable extends Table
             ->notEmpty('email');
 
         $validator
-            ->requirePresence('job', 'create')
-            ->notEmpty('job');
-
-        $validator
-            ->requirePresence('company', 'create')
-            ->notEmpty('company');
-
-        $validator
-            ->requirePresence('twitter', 'create')
-            ->notEmpty('twitter');
-
-        $validator
-            ->boolean('active')
-            ->requirePresence('active', 'create')
-            ->notEmpty('active');
+            ->boolean('active');
 
         return $validator;
     }
@@ -95,5 +82,77 @@ class MembersTable extends Table
     {
         $rules->add($rules->isUnique(['email']));
         return $rules;
+    }
+
+
+    private function convertEncoding( $array ) {
+        foreach ( $array as &$value ) {
+            $value = utf8_encode( $value );
+        }
+    }
+
+    public function import($filename) {
+        // $filename = "test.csv";
+        // set the filename to read CSV from
+        $filename = TMP . 'uploads' . DS . 'Members' . DS . $filename;
+
+        // echo $filename;
+        
+        // create a message container
+        $return = array(
+            'messages' => array(),
+            'errors' => array(),
+        );
+
+        // open the file
+        $handle = fopen($filename, "r");
+        
+        // read the 1st row as headings
+        $length = 0;
+        $delimiter = ";";
+        $enclosure = '"';
+        $header = fgetcsv($handle,$length,$delimiter,$enclosure);
+
+        // read each data row in the file
+        $i = 0;
+        while (($csv_row = fgetcsv($handle,$length,$delimiter,$enclosure)) !== FALSE) {
+            $i++;
+
+            $this->convertEncoding($csv_row);
+            
+            $member_data = [
+                'firstname' => $csv_row[1],
+                'lastname' => $csv_row[0],
+                'job' => $csv_row[40],
+                'company' => $csv_row[39],
+                'twitter' => $csv_row[52],
+                'email' => $csv_row[31],
+                'active' => true
+            ];
+            if (!is_null($csv_row[33])) {
+                $member_data['birthdate'] = \DateTime::createFromFormat("d/m/Y", $csv_row[33]);
+            }
+
+            // CREATE MEMBER ENTITY AND SAVE
+            $member = $this->newEntity();
+            $member = $this->patchEntity($member, $member_data);
+
+            if ($this->save($member)) {
+                $return['messages'][] = __('Successfully added member from row {0}! First name: {1}, Last name: {2}.',
+                    $i,$csv_row[1], $csv_row[0]);
+            } else {
+                $data = implode(", ",$member_data);
+                $errors = @json_encode($member->errors());
+                $return['errors'][] = __('Adding member from row {0} failed. Data: {1}. Errors: {2}',
+                    $i, $data, $errors);
+            }
+        }
+
+        // close the file
+        fclose($handle);
+        
+        // return the messages
+        return $return;
+        
     }
 }
