@@ -52,6 +52,17 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="description"><?= __('Description') ?> <?= __('(optional)') ?>:</label>
+                    <div class="col-sm-10">
+                        <?php  echo $this->Form->input('description', [
+                            'class' => 'form-control',
+                            'label' => false,
+                            'placeholder' => __('For example: Members who registered in the event last night')
+                        ]); ?>
+                    </div>
+                </div>
+
                 <div class="hr-line-dashed"></div>
 
                 <div class="form-group">
