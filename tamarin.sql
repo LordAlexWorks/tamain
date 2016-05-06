@@ -72,6 +72,23 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `file_uploads`
+--
+
+CREATE TABLE IF NOT EXISTS `file_uploads` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `file_name` varchar(255) NOT NULL,
+  `file_dir` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

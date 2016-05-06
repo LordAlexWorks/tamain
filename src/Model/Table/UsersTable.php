@@ -29,6 +29,10 @@ class UsersTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('FileUploads', [
+            'foreignKey' => 'user_id'
+        ]);
     }
 
     /**
