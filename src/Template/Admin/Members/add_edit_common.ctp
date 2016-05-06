@@ -148,9 +148,6 @@
                             <fieldset class="form-horizontal">
                                 <div id="groupMembership">
                                     <?php
-                                        // $default_date = Time::now();
-                                        // $default_date->addYear(1);
-
                                         $input_options = [
                                             "minYear" => date('Y') - 3,
                                             "maxYear" => date('Y') + 60,
