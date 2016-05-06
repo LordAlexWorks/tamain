@@ -1,8 +1,8 @@
 <?php
 namespace App\Model\Entity;
 
-use Cake\ORM\Entity;
 use Cake\Auth\DefaultPasswordHasher;
+use Cake\ORM\Entity;
 
 /**
  * User Entity.
@@ -50,7 +50,9 @@ class User extends Entity
     
     /**
      * Return hashed password
-     * @return string
+     *
+     * @param string $password Password to be hashed
+     * @return string Hashed password
      */
     protected function _setPassword($password)
     {
@@ -61,7 +63,8 @@ class User extends Entity
      * Return first and last name concatenated
      * @return string
      */
-    protected function _getFullName() {
+    protected function _getFullName()
+    {
         return $this->_properties['first_name'] . '  ' .
                 $this->_properties['last_name'];
     }

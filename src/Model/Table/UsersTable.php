@@ -99,9 +99,13 @@ class UsersTable extends Table
     }
 
     /**
-     * Return active users
+     * Filter query returning only active users
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
      */
-    public function findAuth($query, array $options)
+    public function findAuth(\Cake\ORM\Query $query, array $options)
     {
         $query
             ->where(['Users.active' => 1]);

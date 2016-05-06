@@ -91,28 +91,43 @@ class MembersTable extends Table
      *
      * @return string Dir name
      */
-    public function getMemberImportUploadDir() {
+    public function getMemberImportUploadDir()
+    {
         return "member_import_files";
     }
 
-    private function convertEncoding( $array ) {
-        foreach ( $array as &$value ) {
-            $value = utf8_encode( $value );
+    /**
+     * Convert array encoding to UTF
+     *
+     * @param array $array Array to be converted
+     * @return void
+     */
+    protected function convertEncoding(array $array)
+    {
+        foreach ($array as &$value) {
+            $value = utf8_encode($value);
         }
     }
 
-    public function import($file_upload_id) {
-        $file_uploads = TableRegistry::get('FileUploads');
-        $members_file = $file_uploads->findById($file_upload_id)->first();
+    /**
+     * Create members based on data from a CSV file
+     *
+     * @param string $fileUploadId ID of the uploaded CSV file
+     * @return array Messages and errors during import
+     */
+    public function import($fileUploadId)
+    {
+        $fileUploads = TableRegistry::get('FileUploads');
+        $membersFile = $fileUploads->findById($fileUploadId)->first();
 
         // set the filename to read CSV from
-        $filename = $members_file->full_dir . DS . $members_file->file_name;
+        $filename = $membersFile->full_dir . DS . $membersFile->file_name;
         
         // create a message container
-        $return = array(
-            'messages' => array(),
-            'errors' => array(),
-        );
+        $return = [
+            'messages' => [],
+            'errors' => [],
+        ];
 
         // open the file
         $handle = fopen($filename, "r");
@@ -121,40 +136,48 @@ class MembersTable extends Table
         $length = 0;
         $delimiter = ";";
         $enclosure = '"';
-        $header = fgetcsv($handle,$length,$delimiter,$enclosure);
+        $header = fgetcsv($handle, $length, $delimiter, $enclosure);
 
         // read each data row in the file
         $i = 0;
-        while (($csv_row = fgetcsv($handle,$length,$delimiter,$enclosure)) !== FALSE) {
+        while (($csvRow = fgetcsv($handle, $length, $delimiter, $enclosure)) !== false) {
             $i++;
 
-            $this->convertEncoding($csv_row);
+            $this->convertEncoding($csvRow);
             
-            $member_data = [
-                'firstname' => $csv_row[1],
-                'lastname' => $csv_row[0],
-                'job' => $csv_row[40],
-                'company' => $csv_row[39],
-                'twitter' => $csv_row[52],
-                'email' => $csv_row[31],
+            $memberData = [
+                'firstname' => $csvRow[1],
+                'lastname' => $csvRow[0],
+                'job' => $csvRow[40],
+                'company' => $csvRow[39],
+                'twitter' => $csvRow[52],
+                'email' => $csvRow[31],
                 'active' => true
             ];
-            if (!is_null($csv_row[33])) {
-                $member_data['birthdate'] = \DateTime::createFromFormat("d/m/Y", $csv_row[33]);
+            if (!is_null($csvRow[33])) {
+                $memberData['birthdate'] = \DateTime::createFromFormat("d/m/Y", $csvRow[33]);
             }
 
             // CREATE MEMBER ENTITY AND SAVE
             $member = $this->newEntity();
-            $member = $this->patchEntity($member, $member_data);
+            $member = $this->patchEntity($member, $memberData);
 
             if ($this->save($member)) {
-                $return['messages'][] = __('Successfully added member from row {0}! First name: {1}, Last name: {2}.',
-                    $i,$csv_row[1], $csv_row[0]);
+                $return['messages'][] = __(
+                    'Successfully added member from row {0}! First name: {1}, Last name: {2}.',
+                    $i,
+                    $csvRow[1],
+                    $csvRow[0]
+                );
             } else {
-                $data = implode(", ",$member_data);
-                $errors = @json_encode($member->errors());
-                $return['errors'][] = __('Adding member from row {0} failed. Data: {1}. Errors: {2}',
-                    $i, $data, $errors);
+                $data = implode(", ", $memberData);
+                $errors = json_encode($member->errors());
+                $return['errors'][] = __(
+                    'Adding member from row {0} failed. Data: {1}. Errors: {2}',
+                    $i,
+                    $data,
+                    $errors
+                );
             }
         }
 
@@ -163,6 +186,5 @@ class MembersTable extends Table
         
         // return the messages
         return $return;
-        
     }
 }

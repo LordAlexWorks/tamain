@@ -87,26 +87,26 @@ class FileUploadsTable extends Table
     /**
      * Before entities are created, prevent files with the same name
      *
-     * @param Event
-     * @param ArrayObject
-     * @param ArrayObject
+     * @param \Cake\Event\Event $event The beforeMarshal event.
+     * @param \ArrayObject $data Event data
+     * @param \ArrayObject $options Event options
+     * @return void
      */
     public function beforeMarshal(\Cake\Event\Event $event, \ArrayObject $data, \ArrayObject $options)
     {
         if (isset($data['file_name']["name"])) {
-            $filename_ext = pathinfo($data['file_name']["name"], PATHINFO_EXTENSION);
-            $filename = preg_replace('/^(.*)\.' . $filename_ext . '$/', '$1', $data['file_name']["name"]);
+            $filenameExtension = pathinfo($data['file_name']["name"], PATHINFO_EXTENSION);
+            $filename = preg_replace('/^(.*)\.' . $filenameExtension . '$/', '$1', $data['file_name']["name"]);
 
             $number = 0;
             do {
                 if ($number > 0) {
-                    $data['file_name']["name"] = $filename."_".mt_rand().".".$filename_ext;
+                    $data['file_name']["name"] = $filename . "_" . mt_rand() . "." . $filenameExtension;
                 }
 
-                $same_name_files = $this->findByFileName($data['file_name']["name"]);
-                $number = $same_name_files->count();
-
-            } while($number > 0);
+                $sameNameFiles = $this->findByFileName($data['file_name']["name"]);
+                $number = $sameNameFiles->count();
+            } while ($number > 0);
         }
     }
 }

@@ -14,7 +14,7 @@ class MembershipsController extends AppController
     /**
      * Index method
      *
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Network\Response|null|void
      */
     public function index()
     {
@@ -31,7 +31,7 @@ class MembershipsController extends AppController
      * View method
      *
      * @param string|null $id Membership id.
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Network\Response|null|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null)

@@ -14,7 +14,7 @@ class UsersController extends AppController
     /**
      * Index method
      *
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Network\Response|null|void
      */
     public function index()
     {
@@ -60,7 +60,7 @@ class UsersController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $userPass = $this->request->data('password');
-            if (empty($userPass)){
+            if (empty($userPass)) {
                 unset($this->request->data['password']);
                 unset($this->request->data['confirm_password']);
             }
@@ -98,6 +98,8 @@ class UsersController extends AppController
 
     /**
      * Login
+     *
+     * @return \Cake\Network\Response|null Redirects to Auth redirect url
      */
     public function login()
     {
@@ -114,7 +116,7 @@ class UsersController extends AppController
     
     /**
      * Logout
-     * @return void
+     * @return \Cake\Network\Response|null Redirects to Auth logout
      */
     public function logout()
     {
