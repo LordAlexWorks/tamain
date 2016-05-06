@@ -2,24 +2,17 @@
 
 ---
 
-## CakePHP
-
-### Installation
-
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
+## Installation
 
 1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app tamarin`.
+2. Run `composer update`.
 
-If Composer is installed globally, run
-```bash
-composer create-project --prefer-dist cakephp/app tamarin
-```
 
-You should now be able to visit the path to where you installed the app.
-
+## CakePHP
 
 ### Configuration
+
+The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
 
 Read and edit `config/app.php` and setup the 'Datasources' and any other
 configuration relevant for your application, if needed.
@@ -94,8 +87,9 @@ web: bin/cake server -H XXX.XXX.X.X -p $PORT
 
 For more information: https://devcenter.heroku.com/articles/procfile
 
+---
 
-### Run heroku locally
+## Run locally
 
 ```bash
 heroku local web -p 5673
@@ -104,3 +98,38 @@ heroku local web -p 5673
 Go to your browser and access the URL returned (e.g. http://localhost:5673).
 
 
+## Analyze code using PHP_CodeSniffer
+
+Before each pull request, analyze your code against CakePHP's standards:
+
+### Let code sniffer know where to find your sniffs
+```bash
+./vendor/bin/phpcs --config-set \
+installed_paths ../../cakephp/cakephp-codesniffer
+```
+
+* Where `../../cakephp/cakephp-codesniffer` is the path to cakephp-codesniffer installed with composer 
+
+### Analyze the code
+To analyze the code: 
+```bash
+./vendor/bin/phpcs --standard=CakePHP src
+```
+
+* Where `src` is the path to code. You can also run it in any other files/paths
+
+To automatically correct coding standard violations:
+```bash
+./vendor/bin/phpcbf --standard=CakePHP src
+```
+
+* Where `src` is the path to code. You can also run it in any other files/paths
+
+
+### Resources
+PHP CodeSniffer Documentation: https://github.com/squizlabs/PHP_CodeSniffer/wiki
+
+CakePHP CodeSniffer: https://github.com/cakephp/cakephp-codesniffer
+
+A good tutorial:
+http://andy-carter.com/blog/setting-up-php-codesniffer-in-sublime-text-3-for-cakephp-and-other-standards
