@@ -38,7 +38,8 @@
          'plugins/metisMenu/jquery.metisMenu',
          'plugins/slimscroll/jquery.slimscroll.min',
          'plugins/validate/jquery.validate.min',
-         'inspinia'
+         'inspinia',
+         'custom'
          ]); ?>
     <?= $this->fetch('pluginJs') ?>
     <?= $this->fetch('scriptBottom') ?>

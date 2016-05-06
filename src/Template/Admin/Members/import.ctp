@@ -29,14 +29,26 @@
                 echo $this->Form->create($file_upload, ['type' => 'file']);
             ?>
             <fieldset class="form-horizontal">
-            	<div class="form-group">
+                <div class="form-group">
                     <label class="col-sm-2 control-label"><?= __('Members file to import') ?>:</label>
-                    <div class="col-sm-10">
-                        <?php  echo $this->Form->input('file_name', [
-                        	'type' => 'file',
-                            'class' => 'form-control file',
-                            'label' => null
-                        ]); ?>
+                    <div class="col-sm-10 relative">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <label class="btn btn-primary btn-file" for="file_name">
+                                    <?php  echo $this->Form->input('file_name', [
+                                        'id' => 'file_name',
+                                        'type' => 'file',
+                                        'label' => false,
+                                        'class' => 'form-control',
+                                        'templates' => [
+                                            'inputContainer' => '<div class="input required">{{content}}</div>'
+                                        ]
+                                    ]); ?>
+                                    <?= __("Choose .csv file") ?> 
+                                </label>
+                            </span>
+                            <span class="file-input-label"></span>
+                        </div>
                     </div>
                 </div>
 
