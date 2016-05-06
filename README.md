@@ -62,8 +62,8 @@ Add the following line with your local database info, for example:
 DEBUG=1
 APP_ENCODING='UTF-8'
 APP_DEFAULT_LOCALE='fr_FR'
-DATABASE_URL='mysql://root:password@localhost/local_girlzinweb'
-DATABASE_TEST_URL='mysql://root:password@localhost/test_girlzinweb'
+DATABASE_URL='mysql://root:password@localhost/local_tamarin'
+DATABASE_TEST_URL='mysql://root:password@localhost/test_tamarin'
 ```
 
 ---

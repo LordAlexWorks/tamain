@@ -26,7 +26,7 @@
                 <div class="pull-right">
                 </div>
                 <div>
-                    <strong>Copyright</strong> Girlz in Web &copy; <?php echo date('Y'); ?>
+                    <strong>Copyright</strong> Tamarin &copy; <?php echo date('Y'); ?>
                 </div>
             </div>
         </div>

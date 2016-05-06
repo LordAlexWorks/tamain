@@ -1,5 +1,5 @@
 <div class="col-md-6">
-    <h2 class="font-bold"><?= __('Welcome to Girlz in Web') ?> </h2>
+    <h2 class="font-bold"><?= __('Welcome to Tamarin') ?> </h2>
     <p><?= __('Please login to continue.') ?></p>
 </div>
 <div class="col-md-6">

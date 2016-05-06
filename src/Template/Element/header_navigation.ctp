@@ -5,7 +5,7 @@
         </div>
         <ul class="nav navbar-top-links navbar-right">
             <li>
-                <h2 class="m-r-sm welcome-message"><?= __("Welcome to Girlz in Web's Admin Panel") ?></h2>
+                <h2 class="m-r-sm welcome-message"><?= __("Welcome to Tamarin's Admin Panel") ?></h2>
             </li>
             <li>
                 <a href="<?php echo $this->Url->build([

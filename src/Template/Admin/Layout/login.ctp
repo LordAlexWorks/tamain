@@ -25,7 +25,7 @@
                 
             </div>
             <div class="col-md-6 text-right">
-               <small>© LearJet <?php echo date('Y'); ?></small>
+               <small>© Tamarin <?php echo date('Y'); ?></small>
             </div>
         </div>
     </div>

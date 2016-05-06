@@ -3,7 +3,7 @@
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> <?= __('Girlz in Web') ?> </title>
+    <title> <?= __('Tamarin') ?> </title>
     <?= $this->Html->meta('icon') ?>
     <?= $this->fetch('meta') ?>
     
@@ -17,7 +17,7 @@
     <div class="container">
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-9">
-                <h1><?= __('Welcome to Girlz in Web') ?> </h1>
+                <h1><?= __('Welcome to Tamarin') ?> </h1>
                 <ol class="breadcrumb">
                     <li>
                         <a href="<?php $this->request->webroot; ?>">Home</a>
@@ -31,7 +31,7 @@
         <?php echo $this->fetch('content'); ?>
         <div class="row wrapper white-bg" id="footer">
             <div>
-                <strong>Copyright</strong> Girlz in Web © <?php echo date('Y'); ?>
+                <strong>Copyright</strong> Tamarin © <?php echo date('Y'); ?>
             </div>
         </div>
     </div>
