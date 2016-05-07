@@ -14,7 +14,7 @@ class MembersController extends AppController
     /**
      * Index method
      *
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Network\Response|null|void
      */
     public function index()
     {
@@ -28,7 +28,7 @@ class MembersController extends AppController
      * View method
      *
      * @param string|null $id Member id.
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Network\Response|null|void
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null)
@@ -76,7 +76,9 @@ class MembersController extends AppController
             'contain' => ['Memberships']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $member = $this->Members->patchEntity($member, $this->request->data,
+            $member = $this->Members->patchEntity(
+                $member,
+                $this->request->data,
                 ['associated' => ['Memberships']]
             );
             if ($this->Members->save($member)) {
@@ -118,34 +120,33 @@ class MembersController extends AppController
     public function import()
     {
         $this->loadModel('FileUploads');
-        $file_upload = $this->FileUploads->newEntity();
+        $fileUpload = $this->FileUploads->newEntity();
         if ($this->request->is('post')) {
-            $file_upload_data = $this->request->data;
-            $file_upload_data['type'] = $this->request->data["file_name"]["type"];
-            $file_upload_data['user_id'] = $this->Auth->user('id');
-            $file_upload_data['file_dir'] = $this->Members->getMemberImportUploadDir();
+            $fileUploadData = $this->request->data;
+            $fileUploadData['type'] = $this->request->data["file_name"]["type"];
+            $fileUploadData['user_id'] = $this->Auth->user('id');
+            $fileUploadData['file_dir'] = $this->Members->getMemberImportUploadDir();
 
             // File upload
-            $file_upload = $this->FileUploads->patchEntity($file_upload, $file_upload_data);
+            $fileUpload = $this->FileUploads->patchEntity($fileUpload, $fileUploadData);
 
-            if ($this->FileUploads->save($file_upload)) {
+            if ($this->FileUploads->save($fileUpload)) {
                 // Import members
-                $import_messages = $this->Members->import($file_upload->id);
-                debug($import_messages);
+                $importMessages = $this->Members->import($fileUpload->id);
+                debug($importMessages);
 
-                if (empty($import_messages['errors'])) {
+                if (empty($importMessages['errors'])) {
                     $this->Flash->success(__('All members have been imported!'));
                     return $this->redirect(['action' => 'index']);
-                }
-                else {
+                } else {
                     $this->Flash->error(__('Not all members were imported. Please, check your spreadsheet and try again.'));
-                    $this->set(compact('import_messages'));
+                    $this->set(compact('importMessages'));
                 }
             } else {
                 $this->Flash->error(__('The file upload was not successful. Please, try again.'));
             }
         }
-        $this->set(compact('file_upload'));
-        $this->set('_serialize', ['file_upload']);
+        $this->set(compact('fileUpload'));
+        $this->set('_serialize', ['fileUpload']);
     }
 }

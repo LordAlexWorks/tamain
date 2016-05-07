@@ -2,6 +2,7 @@
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
 
 /**
  * Member Entity.
@@ -37,14 +38,34 @@ class Member extends Entity
     /**
      * Virtual fields
      */
-    protected $_virtual = ['full_name'];
+    protected $_virtual = ['full_name', 'is_membership_active'];
     
     /**
      * Return first and last name concatenated
      * @return string
      */
-    protected function _getFullName() {
+    protected function _getFullName()
+    {
         return $this->_properties['firstname'] . '  ' .
                 $this->_properties['lastname'];
+    }
+
+    /**
+     * Return true if member has memberships
+     * that expire today or later
+     *
+     * @return bool Whether there are active memberships
+     */
+    protected function _getIsMembershipActive()
+    {
+        $memberships = TableRegistry::get('Memberships');
+        $active = $memberships->find()
+            ->where([
+                'Memberships.member_id = ' => $this->_properties['id'],
+                'Memberships.expires_on >=' => new \DateTime()
+            ])
+            ->count();
+
+        return ($active > 0 ? true : false);
     }
 }

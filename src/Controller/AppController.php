@@ -59,6 +59,12 @@ class AppController extends Controller
         ]);
     }
 
+    /**
+     * Before every action in the controller.
+     *
+     * @param \Cake\Event\Event $event The beforeFilter event.
+     * @return void
+     */
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);

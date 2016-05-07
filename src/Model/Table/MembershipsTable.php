@@ -68,4 +68,26 @@ class MembershipsTable extends Table
         $rules->add($rules->existsIn(['member_id'], 'Members'));
         return $rules;
     }
+
+
+    /**
+     * Query to return memberships within interval
+     * Does not include max_date
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findWithinDates(\Cake\ORM\Query $query, array $options)
+    {
+        if (isset($options['min_date']) && isset($options['max_date'])) {
+            $query
+                ->where([
+                    'Memberships.expires_on >=' => $options['min_date'],
+                    'Memberships.expires_on <' => $options['max_date'],
+                ]);
+        }
+        
+        return $query;
+    }
 }

@@ -43,9 +43,9 @@ class FileUpload extends Entity
      * Return full directory of the file (does not include file name)
      * @return string
      */
-    protected function _getFullDir() {
+    protected function _getFullDir()
+    {
         return WWW_ROOT . 'fileuploads' . DS . 'file_name' . DS .
                 $this->_properties['file_dir'];
     }
-    
 }
