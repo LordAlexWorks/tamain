@@ -3,13 +3,13 @@
 <?php $this->end(); ?>
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2><?= __("Users list") ?></h2>
+        <h2><?= __("Administrators list") ?></h2>
         <ol class="breadcrumb">
             <li>
                 <a href="<?php echo $this->Url->build('/admin'); ?>"><?= __("Home") ?></a>
             </li>
             <li class="active">
-                <strong><?= __("Users") ?></strong>
+                <strong><?= __("Administrators") ?></strong>
             </li>
         </ol>
     </div>
@@ -21,7 +21,7 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5><?= __("List of admin users") ?></h5>
+                    <h5><?= __("List of Administrators") ?></h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
