@@ -1,13 +1,13 @@
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-10">
-        <h2><?php echo $user->isNew() ? __('Add user') : __('Edit user'); ?></h2>
+        <h2><?php echo $user->isNew() ? __('Add administrator') : __('Edit administrator'); ?></h2>
         <ol class="breadcrumb">
             <li>
                 <a href="<?php echo $this->Url->build('/admin'); ?>"><?= __('Home') ?></a>
             </li>
             <li class="active">
                 <a href="<?php echo $this->Url->build(['controller' => 'Users', 'action' => 'index']); ?>">
-                    <?= __('Users') ?>
+                    <?= __('Administrators') ?>
                 </a>
             </li>
             <?php if (!$user->isNew()): ?>
@@ -30,7 +30,7 @@
         <div class="col-lg-12">
             <div class="tabs-container">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#tab-1"><?= __('User info') ?></a></li>
+                    <li class="active"><a data-toggle="tab" href="#tab-1"><?= __('Administrators info') ?></a></li>
                 </ul>
                 <div class="tab-content">
                     <div id="tab-1" class="tab-pane active">

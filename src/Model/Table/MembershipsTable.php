@@ -2,10 +2,15 @@
 namespace App\Model\Table;
 
 use App\Model\Entity\Membership;
+use Cake\Core\Configure;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Mailchimp;
 
 /**
  * Memberships Model
@@ -89,5 +94,37 @@ class MembershipsTable extends Table
         }
         
         return $query;
+    }
+
+    /**
+     * Fired after an entity is saved.
+     *
+     * @param Event $event Event
+     * @param EntityInterface $entity Entity membership (already saved)
+     * @param \ArrayObject $options Options
+     * @return void
+     */
+    public function afterSave(Event $event, EntityInterface $entity, \ArrayObject $options)
+    {
+        // Subscribe member to mailchimp list
+        echo $entity->expires_on;
+        if ($entity->expires_on > Time::now()) {
+            $mailchimpKey = Configure::read('App.mailchimpKey');
+            $listId = "eaad0ec6e1";
+
+            $mc = new Mailchimp($mailchimpKey);
+            
+            $member = $this->Members->findById($entity->member_id)->first();
+            
+            try {
+                $mc->lists->subscribe($listId, ['email' => $member->email]);
+            } catch (Mailchimp_Error $e) {
+                if ($e->getMessage()) {
+                    $this->error = $e->getMessage();
+                } else {
+                    $this->error = 'An unknown error occurred when registering user in Mailchimp.';
+                }
+            }
+        }
     }
 }

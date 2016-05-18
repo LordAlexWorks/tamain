@@ -24,7 +24,7 @@
                     'action' => 'index'
                     ]); ?>">
                     <i class="fa fa-users"></i> 
-                    <span class="nav-label"><?= __("Users") ?></span> 
+                    <span class="nav-label"><?= __("Administrator area") ?></span> 
                     <span class="fa arrow"></span>
                 </a>
                 <ul class="nav nav-second-level collapse
@@ -38,7 +38,7 @@
                             class="<?php echo $this->request->controller == 'Users' 
                                     && $this->request->action == 'add'? 'active' : ''; ?>"
                             >
-                            <?= __("Add New") ?>
+                            <?= __("Add New Admin") ?>
                         </a>
                     </li>
                     <li>
@@ -49,7 +49,18 @@
                             class="<?php echo $this->request->controller == 'Users' 
                                     && $this->request->action == 'index'? 'active' : ''; ?>"
                             >
-                            <?= __("Users List") ?>
+                            <?= __("Admin List") ?>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->Url->build([
+                            'controller' => 'Users',
+                            'action' => 'index'
+                            ]); ?>"
+                            class="<?php echo $this->request->controller == 'Users' 
+                                    && $this->request->action == 'index'? 'active' : ''; ?>"
+                            >
+                            <?= __("Configure Mailchimp") ?>
                         </a>
                     </li>
                 </ul>
