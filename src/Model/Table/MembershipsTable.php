@@ -123,11 +123,11 @@ class MembershipsTable extends Table
                 ])
                 ->order(['Memberships.expires_on' => 'DESC']);
 
-            $highest_expiration_date = $membershipsActiveOrRecent->first()->expires_on;
+            $highestExpirationDate = $membershipsActiveOrRecent->first()->expires_on;
 
-            // Subscribe member to mailchimp list if no memberships are active
-            // or expired less than 15 days ago
             if ($membershipsActiveOrRecent->count() == 1) {
+                // Subscribe member to mailchimp list if no memberships are active
+                // or expired less than 15 days ago
                 try {
                     $mc->post("lists/$listId/members", [
                         "status" => "subscribed",
@@ -145,10 +145,9 @@ class MembershipsTable extends Table
                         $this->error = 'An unknown error occurred when registering user in Mailchimp.';
                     }
                 }
-            }
-            // Already subscribed to mailchimp in previous membership
-            // Update expiration field if this one is higher
-            elseif ($entity->expires_on >= $highest_expiration_date) {
+            } elseif ($entity->expires_on >= $highestExpirationDate) {
+                // Already subscribed to mailchimp in previous membership
+                // Update expiration field if this one is higher
                 try {
                     $subscriberHash = md5(strtolower($member->email));
                     $mc->patch("lists/$listId/members/$subscriberHash", [

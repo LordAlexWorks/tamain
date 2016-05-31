@@ -29,14 +29,14 @@ class MailchimpShell extends Shell
         $membersExpiring = $this->Members->find('all')
             ->matching('Memberships', function ($q) use ($expirationDate) {
                 return $q->where([
-                    'Memberships.expires_on >=' => $expirationDate.":00:00:00",
-                    'Memberships.expires_on <=' => $expirationDate.":23:59:59"
+                    'Memberships.expires_on >=' => $expirationDate . ":00:00:00",
+                    'Memberships.expires_on <=' => $expirationDate . ":23:59:59"
                 ]);
             });
 
         $mailchimpKey = Configure::read('App.mailchimpKey');
         $listId = "eaad0ec6e1";
-        $unsubscribe_operations = array();
+        $unsubscribeOperations = [];
 
         foreach ($membersExpiring as $member) {
             // Member does not have an active membership now
@@ -44,7 +44,7 @@ class MailchimpShell extends Shell
                 $subscriberHash = md5(strtolower($member->email));
 
                 // Add operation to batch request
-                array_push($unsubscribe_operations, [
+                array_push($unsubscribeOperations, [
                     "method" => "PATCH",
                     "path" => "lists/$listId/members/$subscriberHash",
                     "body" => json_encode([
@@ -62,7 +62,7 @@ class MailchimpShell extends Shell
 
         try {
             $mc->post("batches", [
-                "operations" => $unsubscribe_operations
+                "operations" => $unsubscribeOperations
             ]);
         } catch (Exception $e) {
             if ($e->getMessage()) {
