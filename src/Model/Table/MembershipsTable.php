@@ -106,23 +106,35 @@ class MembershipsTable extends Table
      */
     public function afterSave(Event $event, EntityInterface $entity, \ArrayObject $options)
     {
-        // Subscribe member to mailchimp list
-        echo $entity->expires_on;
-        if ($entity->expires_on > Time::now()) {
-            $mailchimpKey = Configure::read('App.mailchimpKey');
-            $listId = "eaad0ec6e1";
+        // Subscribe member to mailchimp list if no memberships are active
+        // or expired less than 15 days ago
+        $expiration = new \DateTime($entity->expires_on);
 
-            $mc = new Mailchimp($mailchimpKey);
-            
-            $member = $this->Members->findById($entity->member_id)->first();
-            
-            try {
-                $mc->lists->subscribe($listId, ['email' => $member->email]);
-            } catch (Mailchimp_Error $e) {
-                if ($e->getMessage()) {
-                    $this->error = $e->getMessage();
-                } else {
-                    $this->error = 'An unknown error occurred when registering user in Mailchimp.';
+        if ($expiration >= new \DateTime) {
+            $membershipsActiveOrRecent = $this->find('all')
+                ->where([
+                    'Memberships.member_id =' => $entity->member_id,
+                    'Memberships.expires_on >=' => date_format(new \DateTime("- 15 days"), 'Y-m-d')
+                ])
+                ->count();
+
+            // Only this membership is active
+            if ($membershipsActiveOrRecent <= 1) {
+                $mailchimpKey = Configure::read('App.mailchimpKey');
+                $listId = "eaad0ec6e1";
+
+                $mc = new Mailchimp($mailchimpKey);
+                
+                $member = $this->Members->findById($entity->member_id)->first();
+                
+                try {
+                    $mc->lists->subscribe($listId, ['email' => $member->email]);
+                } catch (Mailchimp_Error $e) {
+                    if ($e->getMessage()) {
+                        $this->error = $e->getMessage();
+                    } else {
+                        $this->error = 'An unknown error occurred when registering user in Mailchimp.';
+                    }
                 }
             }
         }
