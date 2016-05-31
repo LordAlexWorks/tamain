@@ -7,7 +7,6 @@
     "require": {
         "php": ">=5.5.9",
         "cakephp/cakephp": "~3.2",
-        "mailchimp/mailchimp": ">=2.0.0",
         "mobiledetect/mobiledetectlib": "2.*",
         "pacely/mailchimp-apiv3": "dev-master",
         "cakephp/migrations": "~1.0",

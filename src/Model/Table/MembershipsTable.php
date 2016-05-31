@@ -10,7 +10,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-use Mailchimp;
+use Mailchimp\Mailchimp;
 
 /**
  * Memberships Model
@@ -128,8 +128,15 @@ class MembershipsTable extends Table
                 $member = $this->Members->findById($entity->member_id)->first();
                 
                 try {
-                    $mc->lists->subscribe($listId, ['email' => $member->email]);
-                } catch (Mailchimp_Error $e) {
+                    $mc->post("lists/$listId/members", [
+                        "status" => "subscribed",
+                        "email_address" => $member->email,
+                        "merge_fields" => [
+                            "FNAME" => $member->firstname,
+                            "LNAME" => $member->lastname
+                        ]
+                    ]);
+                } catch (Exception $e) {
                     if ($e->getMessage()) {
                         $this->error = $e->getMessage();
                     } else {
