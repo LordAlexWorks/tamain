@@ -26,7 +26,7 @@
         <div class="col-lg-12">
             <h3><?= __("Import members from a CSV file") ?></h3>
             <?php
-                echo $this->Form->create($file_upload, ['type' => 'file']);
+                echo $this->Form->create($fileUpload, ['type' => 'file']);
             ?>
             <fieldset class="form-horizontal">
                 <div class="form-group">
