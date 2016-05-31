@@ -38,7 +38,7 @@ class Member extends Entity
     /**
      * Virtual fields
      */
-    protected $_virtual = ['full_name', 'is_membership_active'];
+    protected $_virtual = ['full_name', 'has_active_membership'];
     
     /**
      * Return first and last name concatenated
@@ -56,7 +56,7 @@ class Member extends Entity
      *
      * @return bool Whether there are active memberships
      */
-    protected function _getIsMembershipActive()
+    protected function _getHasActiveMembership()
     {
         $memberships = TableRegistry::get('Memberships');
         $active = $memberships->find()

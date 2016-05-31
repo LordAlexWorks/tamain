@@ -151,7 +151,7 @@
                                         $input_options = [
                                             "minYear" => date('Y') - 3,
                                             "maxYear" => date('Y') + 60,
-                                            "default" => strtotime(date('d/m/Y') . ' + 1 year'),
+                                            "default" => strtotime(date('Y-m-d') . ' + 1 year'),
                                             "day"=> [
                                                 "class" => "form-control"
                                             ],"month"=> [
