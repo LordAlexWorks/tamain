@@ -19,7 +19,7 @@
 </div>
 <?php echo $this->Flash->render(); ?>
 <?php echo $this->Flash->render('auth'); ?>
-<div class="wrapper wrapper-content animated fadeInRight ecommerce">
+<div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
         <div class="col-lg-12">
             <div class="tabs-container">

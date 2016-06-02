@@ -2,6 +2,7 @@
 namespace App\Controller\Admin;
 
 use App\Controller\AppController;
+use Cake\I18n\Time;
 
 /**
  * Members Controller
@@ -148,5 +149,70 @@ class MembersController extends AppController
         }
         $this->set(compact('fileUpload'));
         $this->set('_serialize', ['fileUpload']);
+    }
+
+    /**
+     * Filter members
+     *
+     * @return \Cake\Network\Response|void
+     */
+    public function filter()
+    {
+        if ($this->request->is('post')) {
+            $standardFilter = $this->request->data('standardFilter');
+            if ($standardFilter && !empty($standardFilter)) {
+                // Existing filters: new members and past members
+                $members = $this->Members->find($standardFilter);
+            } else {
+                // Custom filters
+                $minDate = $this->request->data('min_date');
+                
+                $members = $this->Members->find()
+                    ->matching('Memberships', function ($q) use ($minDate) {
+                        return $q->where([
+                            'Memberships.expires_on >=' => $minDate['year'] . "/" . $minDate['month'] . "/" . $minDate['day']
+                        ]);
+                    });
+            }
+
+            $members = $members
+                ->contain(['Memberships' => [
+                    'sort' => ['Memberships.expires_on' => 'DESC']
+                ]])
+                ->autoFields(true)
+                ->distinct(['Members.id'])
+                ->toArray();
+
+            $_serialize = 'members';
+            $_header = [__('Email'), __('First name'), __('Last name'),
+                __('Job title'), __('Company'), __('Twitter'),
+                __('Active'), __('Last membership expires on') ];
+            $_extract = [
+                'email',
+                'firstname',
+                'lastname',
+                'job',
+                'company',
+                'twitter',
+                'has_active_membership_text',
+                'memberships.0.expires_on'
+            ];
+            $_delimiter = ";";
+
+            $this->response->download('Tamarin_Members_' . date('Y-m-d_h-s') . '.csv');
+
+            $this->viewBuilder()->className('CsvView.Csv');
+            $this->set(compact('members', '_serialize', '_header', '_extract', '_delimiter'));
+            return;
+        }
+
+        $daysBeforeToday = $this->Members->settingsFilters['new-members']['daysBeforeToday'];
+        $newMembersDate = date_format(new \DateTime("- $daysBeforeToday days"), 'd/m/Y');
+
+        $daysBeforeToday = $this->Members->settingsFilters['past-members']['daysBeforeToday'];
+        $pastMembersDate = date_format(new \DateTime("- $daysBeforeToday days"), 'd/m/Y');
+
+        $this->set(compact('members', 'newMembersDate', 'pastMembersDate'));
+        $this->set('_serialize', ['members']);
     }
 }

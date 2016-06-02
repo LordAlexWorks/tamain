@@ -38,7 +38,7 @@ class Member extends Entity
     /**
      * Virtual fields
      */
-    protected $_virtual = ['full_name', 'has_active_membership'];
+    protected $_virtual = ['full_name', 'has_active_membership', 'has_active_membership_text'];
     
     /**
      * Return first and last name concatenated
@@ -67,5 +67,16 @@ class Member extends Entity
             ->count();
 
         return ($active > 0 ? true : false);
+    }
+
+    /**
+     * Return Yes if member has memberships
+     * that expire today or later, and No otherwise
+     *
+     * @return string Yes|No - whether there are active memberships
+     */
+    protected function _getHasActiveMembershipText()
+    {
+        return ($this->has_active_membership ? "Yes" : "No");
     }
 }
