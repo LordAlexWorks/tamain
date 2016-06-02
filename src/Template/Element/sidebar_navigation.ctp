@@ -96,7 +96,18 @@
                             class="<?php echo $this->request->controller == 'Members' 
                                     && $this->request->action == 'import'? 'active' : ''; ?>"
                             >
-                            <?= __("Import Members") ?>
+                            <?= __("Import") ?>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->Url->build([
+                            'controller' => 'Members',
+                            'action' => 'filter'
+                            ]); ?>"
+                            class="<?php echo $this->request->controller == 'Members' 
+                                    && $this->request->action == 'filter'? 'active' : ''; ?>"
+                            >
+                            <?= __("Filter and Export") ?>
                         </a>
                     </li>
                     <li>

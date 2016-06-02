@@ -61,7 +61,8 @@ CREATE TABLE IF NOT EXISTS `members` (
   `job` varchar(255) NOT NULL,
   `company` varchar(255) NOT NULL,
   `twitter` varchar(64) NOT NULL,
-  `active` tinyint(1) NOT NULL,
+  `created` datetime DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -76,6 +77,7 @@ CREATE TABLE IF NOT EXISTS `memberships` (
   `member_id` int(11) NOT NULL,
   `expires_on` date NOT NULL,
   `created` date NOT NULL,
+  `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

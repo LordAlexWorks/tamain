@@ -37,8 +37,7 @@ class MembershipsTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('Members', [
-            'foreignKey' => 'member_id',
-            'joinType' => 'INNER'
+            'foreignKey' => 'member_id'
         ]);
     }
 

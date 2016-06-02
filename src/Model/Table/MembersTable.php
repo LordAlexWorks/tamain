@@ -110,6 +110,74 @@ class MembersTable extends Table
     }
 
     /**
+     * Temporarily hardcoded variables that will be
+     * in the settings DB table
+     */
+    public $settingsFilters = [
+        "new-members" => [
+            "daysBeforeToday" => 30
+        ],
+        "past-members" => [
+            "daysBeforeToday" => 30
+        ]
+    ];
+
+    /**
+     * Query to return members with 1+ memberships
+     * that expire after today
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findActiveMembers(\Cake\ORM\Query $query, array $options)
+    {
+        $query->matching('Memberships', function ($q) {
+            return $q->where(['Memberships.expires_on >=' => new \DateTime()]);
+        });
+        
+        return $query;
+    }
+
+    /**
+     * Query to return members created after a certain date
+     * from settings' filter "new-members"
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findNewMembers(\Cake\ORM\Query $query, array $options)
+    {
+        $daysBeforeToday = $this->settingsFilters['new-members']['daysBeforeToday'];
+        $minDate = date_format(new \DateTime("- $daysBeforeToday days"), 'Y-m-d');
+
+        $query->where(['Members.created >=' => $minDate]);
+        
+        return $query;
+    }
+
+    /**
+     * Query to return members with no memberships active
+     * after a certain date from settings' filter "past-members"
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findPastMembers(\Cake\ORM\Query $query, array $options)
+    {
+        $daysBeforeToday = $this->settingsFilters['past-members']['daysBeforeToday'];
+        $maxDate = date_format(new \DateTime("- $daysBeforeToday days"), 'Y-m-d');
+        
+        $query->notMatching('Memberships', function ($q) use ($maxDate) {
+            return $q->where(['Memberships.expires_on >=' => $maxDate]);
+        });
+        
+        return $query;
+    }
+
+    /**
      * Create members based on data from a CSV file
      *
      * @param string $fileUploadId ID of the uploaded CSV file

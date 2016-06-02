@@ -12,6 +12,7 @@
         "cakephp/migrations": "~1.0",
         "cakephp/plugin-installer": "*",
         "davidyell/proffer": "*",
+        "friendsofcake/cakephp-csvview": "*",
         "sendgrid/sendgrid": "~4.0"
     },
     "require-dev": {

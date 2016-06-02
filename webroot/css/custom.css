@@ -1,6 +1,11 @@
 .nav li.active a.active{color: #ffffff;}
 .error-message{color: red;}
 
+/* General */
+.border-none {
+    border:none;
+}
+
 /* Forms and buttons */
 .form-group .required {
     color: #e02222;
@@ -30,4 +35,7 @@
 	padding: 0px 10px;
 	display: table-cell;
 	vertical-align: middle;
+}
+.input-group-addon {
+    border: none;
 }
