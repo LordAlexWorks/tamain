@@ -171,7 +171,7 @@ class MembersTable extends Table
         $maxDate = date_format(new \DateTime("- $daysBeforeToday days"), 'Y-m-d');
         
         $query->notMatching('Memberships', function ($q) use ($maxDate) {
-            return $q->where(['Memberships.expires_on >=' => $maxDate]);
+            return $q->where(['Memberships.expires_on >' => $maxDate]);
         });
         
         return $query;
