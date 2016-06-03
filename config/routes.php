@@ -72,7 +72,7 @@ Router::scope('/', function (RouteBuilder $routes) {
 
 // admin prefix routes
 Router::prefix('admin', function ($routes) {
-    $routes->connect('/', ['controller' => 'Members', 'action' => 'index']);
+    $routes->connect('/', ['controller' => 'Dashboards', 'action' => 'index']);
     $routes->fallbacks('DashedRoute');
 });
 

@@ -18,6 +18,15 @@
                     </span> 
                 </div>
             </li>
+            <li class="<?php echo $this->request->controller == 'Dashboard' ? 'active' : ''; ?>">
+                <a href="<?php echo $this->Url->build([
+                    'controller' => 'Dashboards',
+                    'action' => 'index'
+                    ]); ?>">
+                    <i class="fa fa-area-chart"></i> 
+                    <span class="nav-label"><?= __("Dashboard") ?></span> 
+                </a>
+            </li>
             <li class="<?php echo $this->request->controller == 'Users' ? 'active' : ''; ?>">
                 <a href="<?php echo $this->Url->build([
                     'controller' => 'Users',
