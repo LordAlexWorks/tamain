@@ -133,3 +133,54 @@ CakePHP CodeSniffer: https://github.com/cakephp/cakephp-codesniffer
 
 A good tutorial:
 http://andy-carter.com/blog/setting-up-php-codesniffer-in-sublime-text-3-for-cakephp-and-other-standards
+
+
+## Emails
+
+### Accounts
+
+#### Admin email
+lobobot+tamarinAdmin@lordalexworks.com
+lordalexworks
+
+### Mailchimp account
+lobobot+tamarinAdmin@lordalexworks.com
+@Lordalexworks0406
+
+> **Security questions:**
+> Name of your first employer?
+> LoBo
+> What kind of coffee do we serve in the office?
+> None
+> What brand of coffee maker do you use in the office?
+> None
+
+### Email address of imported members
+
+Whenever importing a CSV file with debug mode active (for local and staging environments), all the member emails are switched to **lobobot+tamarin`{id}`@lordalexworks.com**, according to the member's ID. This is a precaution measure so we can test real CSV data without worrying that we'll email real members.
+
+This does not happen for manually added members, even in debug mode. It also does not apply to editing members.
+
+### When emails are sent to the admins
+
+For now, never.
+
+### When emails are sent to the members
+
+Via sendgrid and Heroku Job Scheduler, no connection to mailchimp for now.
+
+1. Membership expired 15 days ago
+2. Membership expired today
+3. Membership will expire in 15 days
+
+### Mailchimp
+
+Once a list is created in mailchimp, the user can create email campaigns directly there, not needing to change anything in Tamarin.
+
+* **Subscribe**: a member is subscribed in the mailchimp list when their first membership is created.
+  * S/he does not receive any automatic emails, and does not need to confirm subscription.
+* **Data**:
+  * Currently we store in the list: `First name`, `Last name`, and `Expires on`, besides the email. Only `Expires on` is updated, the other data (including email) does not change even when the member updates a profile.
+  * The `Expires on` field is updated whenever the membership is updated, for future or past dates.
+* **Unsubscribe**: a member is unsubscribed automatically 30 days after their last membership expired.
+  * The user and her/his data remains in the list, under a different category ("Unsubscribed").
