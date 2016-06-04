@@ -59,8 +59,10 @@ class MembersController extends AppController
                 $this->Flash->error(__('The member could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('member'));
-        $this->set('_serialize', ['member']);
+
+        $defaultMembershipDate = $this->Members->Memberships->getDefaultMembershipDate();
+        $this->set(compact('member', 'defaultMembershipDate'));
+        $this->set('_serialize', ['member', 'defaultMembershipDate']);
         $this->viewBuilder()->template('add_edit_common');
     }
 
@@ -89,8 +91,10 @@ class MembersController extends AppController
                 $this->Flash->error(__('The member could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('member'));
-        $this->set('_serialize', ['member']);
+        
+        $defaultMembershipDate = $this->Members->Memberships->getDefaultMembershipDate();
+        $this->set(compact('member', 'defaultMembershipDate'));
+        $this->set('_serialize', ['member', 'defaultMembershipDate']);
         $this->viewBuilder()->template('add_edit_common');
     }
 
@@ -161,7 +165,7 @@ class MembersController extends AppController
         if ($this->request->is('post')) {
             $standardFilter = $this->request->data('standardFilter');
             if ($standardFilter && !empty($standardFilter)) {
-                // Existing filters: new members and past members
+                // Existing filters: new members and expired members
                 $members = $this->Members->find($standardFilter);
             } else {
                 // Custom filters
@@ -209,10 +213,10 @@ class MembersController extends AppController
         $daysBeforeToday = $this->Members->settingsFilters['new-members']['daysBeforeToday'];
         $newMembersDate = date_format(new \DateTime("- $daysBeforeToday days"), 'd/m/Y');
 
-        $daysBeforeToday = $this->Members->settingsFilters['past-members']['daysBeforeToday'];
-        $pastMembersDate = date_format(new \DateTime("- $daysBeforeToday days"), 'd/m/Y');
+        $daysBeforeToday = $this->Members->settingsFilters['deactivated-members']['daysBeforeToday'];
+        $deactivatedMembersDate = date_format(new \DateTime("- $daysBeforeToday days"), 'd/m/Y');
 
-        $this->set(compact('members', 'newMembersDate', 'pastMembersDate'));
+        $this->set(compact('members', 'newMembersDate', 'deactivatedMembersDate'));
         $this->set('_serialize', ['members']);
     }
 }

@@ -28,18 +28,20 @@
                         </a>
                     </div>
                 </div>
-                <div class="ibox-content">
+                <div class="ibox-content table-responsive">
+                    <p><small><?= __('Click in the headers to order by column.') ?></small></p>
+
                     <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="8">
                         <thead>
                             <tr>
-                                <th data-toggle="true"><?= $this->Paginator->sort('id') ?></th>
-                                <th><?= $this->Paginator->sort('firstname') ?></th>
-                                <th><?= $this->Paginator->sort('lastname') ?></th>
-                                <th><?= $this->Paginator->sort('email') ?></th>
-                                <th><?= $this->Paginator->sort('birthdate') ?></th>
-                                <th><?= $this->Paginator->sort('job') ?></th>
-                                <th><?= $this->Paginator->sort('company') ?></th>
-                                <th><?= $this->Paginator->sort('twitter') ?></th>
+                                <th data-toggle="true" class="hidden-xs hidden-sm"><?= $this->Paginator->sort('id') ?></th>
+                                <th><?= $this->Paginator->sort('firstname', __('First name')) ?></th>
+                                <th><?= $this->Paginator->sort('lastname', __('Last name')) ?></th>
+                                <th class="hidden-xs hidden-sm"><?= $this->Paginator->sort('email') ?></th>
+                                <th class="hidden-xs hidden-sm"><?= $this->Paginator->sort('birthdate') ?></th>
+                                <th class="hidden-xs hidden-sm"><?= $this->Paginator->sort('job') ?></th>
+                                <th class="hidden-xs hidden-sm"><?= $this->Paginator->sort('company') ?></th>
+                                <th class="hidden-xs hidden-sm"><?= $this->Paginator->sort('twitter') ?></th>
                                 <th data-hide="all"><?= $this->Paginator->sort('active') ?></th>
                                 <th><?= __("Actions") ?></th>
                             </tr>
@@ -47,14 +49,14 @@
                         <tbody>
                             <?php foreach ($members as $member): ?>
                                 <tr>
-                                    <td><?= $this->Number->format($member->id) ?></td>
+                                    <td class="hidden-xs hidden-sm"><?= $this->Number->format($member->id) ?></td>
                                     <td><?= h($member->firstname) ?></td>
                                     <td><?= h($member->lastname) ?></td>
-                                    <td><?= h($member->email) ?></td>
-                                    <td><?= h($member->birthdate) ?></td>
-                                    <td><?= h($member->job) ?></td>
-                                    <td><?= h($member->company) ?></td>
-                                    <td><?php
+                                    <td class="hidden-xs hidden-sm"><?= h($member->email) ?></td>
+                                    <td class="hidden-xs hidden-sm"><?= h($member->birthdate) ?></td>
+                                    <td class="hidden-xs hidden-sm"><?= h($member->job) ?></td>
+                                    <td class="hidden-xs hidden-sm"><?= h($member->company) ?></td>
+                                    <td class="hidden-xs hidden-sm"><?php
                                         if (($member->twitter) && !empty($member->twitter)) {
                                             echo $this->Html->link('<i class="fa fa-twitter"></i>',
                                                 $member->twitter,
@@ -62,7 +64,7 @@
                                         } ?>
                                     </td>
                                     <td>
-                                        <i class="fa <?php echo $member->active ? 'fa-check text-navy' : 'fa-times text-danger'; ?>"></i>
+                                        <i class="fa <?php echo $member->has_active_membership ? 'fa-check text-navy' : 'fa-times text-danger'; ?>"></i>
                                     </td>
                                     <td class="actions">
                                         <?= $this->Html->link('<i class="fa fa-eye"></i>',

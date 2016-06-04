@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `first_name`, `last_name`, `password`, `active`, `created`, `modified`) VALUES
-(1, 'admin', 'gabrielascardine@gmail.com', 'admin', 'admin', '$2y$10$na0feylT0FXBnUcnDX4A2eXSZV.XWPK70xOeuND/ubJo4XsGQ2XUO', 1, '2016-03-20 19:57:14', '2016-04-29 19:03:40');
+(1, 'admin', 'lobobot+tamarinAdmin@lordalexworks.com', 'admin', 'admin', '$2y$10$na0feylT0FXBnUcnDX4A2eXSZV.XWPK70xOeuND/ubJo4XsGQ2XUO', 1, '2016-03-20 19:57:14', '2016-04-29 19:03:40');
 
 -- --------------------------------------------------------
 

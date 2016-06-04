@@ -63,7 +63,9 @@
                     </div>
                 </div>
 
-                <div class="hr-line-dashed"></div>
+                <div class="col-sm-offset-2 col-sm-10 alert alert-warning">
+                    <?= __('Note: A membership will automatically be created for all members. If column "Expires on" is not defined, default date (1 year from today) will be applied. You can change it for each member later on.') ?>
+                </div>
 
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-2">
