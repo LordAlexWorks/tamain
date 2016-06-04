@@ -1,3 +1,3 @@
 #!/bin/sh
 
-bin/cake mailchimp unsubscribeExpiredMembers
+bin/cake mailchimp unsubscribeDeactivatedMembers

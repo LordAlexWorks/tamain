@@ -15,7 +15,7 @@ class MailchimpShell extends Shell
      *
      * @return void
      */
-    public function unsubscribeExpiredMembers()
+    public function unsubscribeDeactivatedMembers()
     {
         $this->loadModel('Members');
         $numDaysExpiration = 30;

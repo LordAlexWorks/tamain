@@ -1,6 +1,7 @@
 <?php
 namespace App\Model\Entity;
 
+use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 
@@ -37,11 +38,14 @@ class Member extends Entity
 
     /**
      * Virtual fields
+     *
+     * @var array
      */
     protected $_virtual = ['full_name', 'has_active_membership', 'has_active_membership_text'];
     
     /**
      * Return first and last name concatenated
+     *
      * @return string
      */
     protected function _getFullName()

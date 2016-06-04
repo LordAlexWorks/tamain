@@ -20,7 +20,7 @@ class ReminderEmailsShell extends Shell
     {
         $email
             ->addTo($recipientEmail, $recipientName)
-            ->from(env('ADMIN_EMAIL', 'gabrielascardine@gmail.com'), 'Tamarin')
+            ->from(env('ADMIN_EMAIL', 'lobobot+tamarinAdmin@lordalexworks.com'), 'Tamarin')
             ->emailFormat('html')
             ->helpers('Html');
         $email->send();

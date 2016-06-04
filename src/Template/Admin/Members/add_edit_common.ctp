@@ -80,12 +80,19 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group form-inline">
                                     <label class="col-sm-2 control-label"><?= __('Birthdate') ?>:</label>
                                     <div class="col-sm-10">
                                         <?php  echo $this->Form->input('birthdate', [
                                             'minYear' => date('Y') - 70,
                                             'maxYear' => date('Y') - 10,
+                                            "day"=> [
+                                                "class" => "form-control"
+                                            ],"month"=> [
+                                                "class" => "form-control"
+                                            ],"year"=> [
+                                                "class" => "form-control"
+                                            ]
                                         ]); ?>
                                     </div>
                                 </div>
@@ -151,7 +158,7 @@
                                         $input_options = [
                                             "minYear" => date('Y') - 3,
                                             "maxYear" => date('Y') + 60,
-                                            "default" => strtotime(date('Y-m-d') . ' + 1 year'),
+                                            "default" => $defaultMembershipDate,
                                             "day"=> [
                                                 "class" => "form-control"
                                             ],"month"=> [
@@ -159,9 +166,9 @@
                                             ],"year"=> [
                                                 "class" => "form-control"
                                             ],"hour"=> [
-                                                "class" => "form-control"
+                                                "class" => "hide"
                                             ],"minute"=> [
-                                                "class" => "form-control"
+                                                "class" => "hide"
                                             ]
                                         ];
                                     ?>

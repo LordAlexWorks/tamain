@@ -51,7 +51,7 @@
 
                                 echo $this->Form->radio('standardFilter', [
                                         'newMembers' => __("New members (created after {0})",$newMembersDate),
-                                        'pastMembers' => __("Past members (all memberships expired before {0})", $pastMembersDate),
+                                        'deactivatedMembers' => __("Deactivated members (all memberships expired before {0})", $deactivatedMembersDate),
                                         'activeMembers' => __("Currently active members (all memberships active from {0} on)", date('d/m/Y'))
                                 ]); ?>
                             </div>

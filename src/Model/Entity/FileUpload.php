@@ -36,6 +36,8 @@ class FileUpload extends Entity
 
     /**
      * Virtual fields
+     *
+     * @var array
      */
     protected $_virtual = ['full_dir'];
     
