@@ -22,6 +22,20 @@ class DashboardsController extends AppController
         $allMembers = $this->Members->find('all');
         $activeMembers = $this->Members->find('activeMembers');
         $newMembers = $this->Members->find('newMembers');
+
+        $statsParams = [
+            'stats' => [
+                'field' => 'created',
+                'referenceDate' => 'today',
+                'dates' => ['-1 month', '-1 year']
+            ]
+        ];
+
+        $allMembersGrowth = $this->Members->find('countGrowth', $statsParams);
+
+        // Need to fix new members query
+        $newMembersGrowth = $this->Members->find('newMembers')->find('countGrowth', $statsParams);
+
         // $soonToExpireMembers = $this->Members->find('soonToExpireMembers');
         $recentlyDeactivatedMembers = $this->Members
             ->find('limboMembers')
@@ -38,6 +52,6 @@ class DashboardsController extends AppController
         // $metrics['averageAge'] = $this->Members->find('averageAge')->count();
         // $metrics['mostCommonJob'] = $this->Members->find('mostCommonJob')->count();
 
-        $this->set(compact('metrics', 'allMembers', 'activeMembers', 'newMembers', 'recentlyDeactivatedMembers'));
+        $this->set(compact('allMembersGrowth', 'newMembersGrowth', 'metrics', 'allMembers', 'activeMembers', 'newMembers', 'recentlyDeactivatedMembers'));
     }
 }

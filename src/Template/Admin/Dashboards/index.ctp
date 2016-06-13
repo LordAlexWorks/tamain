@@ -26,9 +26,16 @@
                     <h5><?= __('Registered members') ?></h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins"><?= $metrics['numRegisteredMembers'] ?></h1>
-                    <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>
-                    <small><?= __('Members registered') ?></small>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h1 class="no-margins"><?= $allMembersGrowth['reference']['count'] ?></h1>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-percent font-bold text-info"><?= number_format($allMembersGrowth['-1 month']['growth'], 0) ?>% <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
+                            <div class="font-bold text-navy"><?= number_format($allMembersGrowth['-1 year']['growth'], 0) ?>% <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
+                        </div>
+                    </div>
+                    <small><?= __('members registered') ?></small>
                 </div>
             </div>
         </div>
@@ -97,15 +104,15 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-4">
-                            <h1 class="no-margins"><?= $metrics['numNewMembers'] ?></h1>
+                            <h1 class="no-margins"><?= $newMembersGrowth['reference']['count'] ?></h1>
                             <small><?= __('members') ?></small>
                         </div>
                         <div class="col-sm-8">
                             <div class="row">
-                                <div class="stat-percent font-bold text-navy">2% <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
+                                <div class="stat-percent font-bold text-navy"><?= number_format($newMembersGrowth['-1 month']['growth'], 0) ?>%  <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
                             </div>
                             <div class="row">
-                                <div class="stat-percent font-bold text-info">44% <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
+                                <div class="stat-percent font-bold text-info"><?= number_format($newMembersGrowth['-1 month']['growth'], 0) ?>%  <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
                             </div>
                         </div>
                     </div>
