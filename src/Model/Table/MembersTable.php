@@ -34,6 +34,7 @@ class MembersTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('GrowthStatistics');
 
         $this->hasMany('Memberships', [
             'foreignKey' => 'member_id'
