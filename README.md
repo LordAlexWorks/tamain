@@ -180,7 +180,7 @@ Once a list is created in mailchimp, the user can create email campaigns directl
 * **Subscribe**: a member is subscribed in the mailchimp list when their first membership is created.
   * S/he does not receive any automatic emails, and does not need to confirm subscription.
 * **Data**:
-  * Currently we store in the list: `First name`, `Last name`, and `Expires on`, besides the email. Only `Expires on` is updated, the other data (including email) does not change even when the member updates a profile.
-  * The `Expires on` field is updated whenever the membership is updated, for future or past dates.
+  * Currently we store in the list: `First name`, `Last name`, `Starts on`, and `Expires on`, besides the email. Only `Starts on` and `Expires on` are updated, the other data (including email) does not change even when the member updates her/his profile.
+  * The `Starts on` and `Expires on` fields are updated whenever the membership is updated, for future or past dates.
 * **Unsubscribe**: a member is unsubscribed automatically 30 days after their last membership expired.
   * The user and her/his data remains in the list, under a different category ("Unsubscribed").

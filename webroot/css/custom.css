@@ -48,3 +48,20 @@ table {
 .table-responsive > .table > tbody > tr > td, .table-responsive > .table > tbody > tr > th, .table-responsive > .table > tfoot > tr > td, .table-responsive > .table > tfoot > tr > th, .table-responsive > .table > thead > tr > td, .table-responsive > .table > thead > tr > th {
     white-space: normal;
 }
+.display-table {
+    display: table;
+}
+.display-table-row {
+    display: table-row;
+}
+.display-table-cell {
+    display: table-cell;
+}
+
+/* Statistics */
+.stat-table .stat-percent {
+    float: none;
+}
+.stat-table .stat-percent .display-table-cell {
+    padding: 0 2px;
+}

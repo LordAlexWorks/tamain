@@ -60,9 +60,9 @@ class MembersController extends AppController
             }
         }
 
-        $defaultMembershipDate = $this->Members->Memberships->getDefaultMembershipDate();
-        $this->set(compact('member', 'defaultMembershipDate'));
-        $this->set('_serialize', ['member', 'defaultMembershipDate']);
+        $membershipDefaultExpiration = $this->Members->Memberships->getMembershipDefaultExpiration();
+        $this->set(compact('member', 'membershipDefaultExpiration'));
+        $this->set('_serialize', ['member', 'membershipDefaultExpiration']);
         $this->viewBuilder()->template('add_edit_common');
     }
 
@@ -92,9 +92,9 @@ class MembersController extends AppController
             }
         }
         
-        $defaultMembershipDate = $this->Members->Memberships->getDefaultMembershipDate();
-        $this->set(compact('member', 'defaultMembershipDate'));
-        $this->set('_serialize', ['member', 'defaultMembershipDate']);
+        $membershipDefaultExpiration = $this->Members->Memberships->getMembershipDefaultExpiration();
+        $this->set(compact('member', 'membershipDefaultExpiration'));
+        $this->set('_serialize', ['member', 'membershipDefaultExpiration']);
         $this->viewBuilder()->template('add_edit_common');
     }
 
@@ -210,11 +210,11 @@ class MembersController extends AppController
             return;
         }
 
-        $daysBeforeToday = $this->Members->settingsFilters['new-members']['daysBeforeToday'];
-        $newMembersDate = date_format(new \DateTime("- $daysBeforeToday days"), 'd/m/Y');
+        $dateModifier = $this->Members->settingsFilters['newMembers']['dateModifier'];
+        $newMembersDate = date_format(new \DateTime($dateModifier), 'd/m/Y');
 
-        $daysBeforeToday = $this->Members->settingsFilters['deactivated-members']['daysBeforeToday'];
-        $deactivatedMembersDate = date_format(new \DateTime("- $daysBeforeToday days"), 'd/m/Y');
+        $dateModifier = $this->Members->settingsFilters['deactivatedMembers']['dateModifier'];
+        $deactivatedMembersDate = date_format(new \DateTime($dateModifier), 'd/m/Y');
 
         $this->set(compact('members', 'newMembersDate', 'deactivatedMembersDate'));
         $this->set('_serialize', ['members']);

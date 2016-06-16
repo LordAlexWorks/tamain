@@ -122,11 +122,15 @@ class MembersTable extends Table
      * @var array
      */
     public $settingsFilters = [
-        "new-members" => [
-            "daysBeforeToday" => 30
+        "newMembers" => [
+            "dateModifier" => '- 30 days'
         ],
-        "deactivated-members" => [
-            "daysBeforeToday" => 30
+        "deactivatedMembers" => [
+            "dateModifier" => '- 30 days'
+        ],
+        "expirationWarnings" => [
+            "beforeExpiration" => '- 15 days',
+            "afterExpiration" => '+ 15 days'
         ]
     ];
 
@@ -140,9 +144,15 @@ class MembersTable extends Table
      */
     public function findActiveMembers(\Cake\ORM\Query $query, array $options)
     {
-        $today = new \DateTime();
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+        
         $query->matching('Memberships', function ($q) use ($today) {
-            return $q->where(['Memberships.expires_on >=' => $today]);
+            return $q->where([
+                'AND' => [
+                    'Memberships.starts_on <=' => $today,
+                    'Memberships.expires_on >=' => $today
+                ]
+            ]);
         });
         
         return $query;
@@ -158,10 +168,18 @@ class MembersTable extends Table
      */
     public function findInactiveMembers(\Cake\ORM\Query $query, array $options)
     {
-        $today = new \DateTime();
-        $query->notMatching('Memberships', function ($q) use ($today) {
-            return $q->where(['Memberships.expires_on >=' => $today]);
-        });
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+
+        $query
+            ->contain('Memberships')
+            ->notMatching('Memberships', function ($q) use ($today) {
+                return $q->where([
+                    'AND' => [
+                        'Memberships.starts_on <=' => $today,
+                        'Memberships.expires_on >=' => $today
+                    ]
+                ]);
+            });
         
         return $query;
     }
@@ -169,7 +187,7 @@ class MembersTable extends Table
 
     /**
      * Query to return members created after a certain date
-     * from settings' filter "new-members"
+     * from settings' filter "newMembers"
      *
      * @param \Cake\ORM\Query $query Query
      * @param array $options Query options
@@ -177,17 +195,23 @@ class MembersTable extends Table
      */
     public function findNewMembers(\Cake\ORM\Query $query, array $options)
     {
-        $daysBeforeToday = $this->settingsFilters['new-members']['daysBeforeToday'];
-        $minDate = date_format(new \DateTime("- $daysBeforeToday days"), 'Y-m-d');
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
 
-        $query->where(['Members.created >=' => $minDate]);
-        
+        $dateModifier = $this->settingsFilters['newMembers']['dateModifier'];
+
+        $minDate = clone $today;
+        $minDate = $minDate->modify($dateModifier);
+
+        $query = $query->where(function ($exp, $q) use ($minDate, $today) {
+             return $exp->between('created', $minDate->format('Y-m-d H:i:s'), $today->format('Y-m-d H:i:s'));
+        });
+
         return $query;
     }
 
     /**
      * Query to return members who have been deactivated: they have had
-     * no memberships active after date from filter "deactivated-members"
+     * no memberships active after date from filter "deactivatedMembers"
      * Attention: this is not the same as 'inactive'.
      *
      * @param \Cake\ORM\Query $query Query
@@ -196,19 +220,58 @@ class MembersTable extends Table
      */
     public function findDeactivatedMembers(\Cake\ORM\Query $query, array $options)
     {
-        $daysBeforeToday = $this->settingsFilters['deactivated-members']['daysBeforeToday'];
-        $maxDate = date_format(new \DateTime("- $daysBeforeToday days"), 'Y-m-d');
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+
+        $dateModifier = $this->settingsFilters['deactivatedMembers']['dateModifier'];
+        $maxDate = clone $today;
+        $maxDate = $maxDate->modify($dateModifier);
         
-        $query->notMatching('Memberships', function ($q) use ($maxDate) {
-            return $q->where(['Memberships.expires_on >' => $maxDate]);
+        $query->notMatching('Memberships', function ($q) use ($today, $maxDate) {
+            return $q->where([
+                'AND' => [
+                    'Memberships.starts_on <=' => $today,
+                    'Memberships.expires_on >=' => $maxDate
+                ]
+            ]);
         });
-        
+
+        return $query;
+    }
+
+    /**
+     * Query to return members who have been recently deactivated
+     * (within 30 days before date from filter "deactivatedMembers")
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findRecentlyDeactivatedMembers(\Cake\ORM\Query $query, array $options)
+    {
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+
+        $dateModifier = $this->settingsFilters['deactivatedMembers']['dateModifier'];
+        $minDate = clone $today;
+        $minDate->modify($dateModifier);
+        $minDate->modify('- 30 days');
+
+        $deactivated = $this->find('deactivatedMembers', $options)->extract('id')->toArray();
+
+        $query
+            ->where(['Members.id IN ' => $deactivated])
+            ->matching('Memberships', function ($q) use ($minDate) {
+                return $q->where([
+                    'Memberships.expires_on >=' => $minDate
+                ]);
+            })
+            ->distinct('Members.id');
+
         return $query;
     }
 
     /**
      * Query to return members who are in the "limbo": last membership
-     * expired between today and the "deactivated-members" filter date
+     * expired between today and the "deactivatedMembers" filter date
      *
      * @param \Cake\ORM\Query $query Query
      * @param array $options Query options
@@ -216,9 +279,11 @@ class MembersTable extends Table
      */
     public function findLimboMembers(\Cake\ORM\Query $query, array $options)
     {
-        $today = new \DateTime();
-        $daysBeforeToday = $this->settingsFilters['deactivated-members']['daysBeforeToday'];
-        $minDate = date_format(new \DateTime("- $daysBeforeToday days"), 'Y-m-d');
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+
+        $dateModifier = $this->settingsFilters['deactivatedMembers']['dateModifier'];
+        $minDate = clone $today;
+        $minDate = $minDate->modify($dateModifier);
         
         $inactive = $this->find('inactiveMembers')->extract('id')->toArray();
 
@@ -226,6 +291,7 @@ class MembersTable extends Table
             ->where(['Members.id IN ' => $inactive])
             ->matching('Memberships', function ($q) use ($today, $minDate) {
                 return $q->where([ 'AND' => [
+                    'Memberships.starts_on <=' => $today,
                     'Memberships.expires_on <' => $today,
                     'Memberships.expires_on >=' => $minDate
                 ] ]);
@@ -233,6 +299,80 @@ class MembersTable extends Table
             ->distinct('Members.id');
 
         return $query;
+    }
+
+    /**
+     * Query to return members who will be deactivated soon
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findSoonToDeactivateMembers(\Cake\ORM\Query $query, array $options)
+    {
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+
+        $dateBeforeExpiration = clone $today;
+        $dateBeforeExpiration->modify($this->settingsFilters['expirationWarnings']['beforeExpiration']);
+
+        $dateAfterExpiration = clone $today;
+        $dateAfterExpiration->modify($this->settingsFilters['expirationWarnings']['afterExpiration']);
+
+        $dateNoNotices = clone $dateAfterExpiration;
+        $dateNoNotices->modify('+ 1 days');
+
+        // Memberships in interval
+        $soonToDeactivate = $this->find('all')
+            ->select(['Members.id'])
+            ->matching('Memberships', function ($q) use ($dateNoNotices, $dateBeforeExpiration) {
+                return $q->where([ 'AND' => [
+                    'Memberships.starts_on <=' => $dateNoNotices,
+                    'Memberships.expires_on <=' => $dateNoNotices,
+                    'Memberships.expires_on >=' => $dateBeforeExpiration
+                ] ]);
+            })
+            ->distinct('Members.id');
+
+        $soonToDeactivateIds = $soonToDeactivate->extract('id')->toArray();
+        if (empty($soonToDeactivateIds)) {
+            return $soonToDeactivate;
+        }
+
+        // Make sure member had not renewed membership already (at the time)
+        $soonToDeactivateNotRenewed = $query
+            ->where(['Members.id IN ' => $soonToDeactivateIds])
+            ->notMatching('Memberships', function ($q) use ($dateNoNotices) {
+                return $q->where([ 'AND' => [
+                    'Memberships.starts_on <=' => $dateNoNotices,
+                    'Memberships.expires_on >' => $dateNoNotices
+                ] ]);
+            })
+            ->contain(['Memberships' => [
+                    'sort' => ['Memberships.expires_on' => 'DESC']
+                ]])
+            ->distinct('Members.id');
+
+        // Add information about which warning has been sent
+        $mapper = function ($member, $key, $mapReduce) use ($today) {
+            $call = 2;
+            $exp = date_format($member->memberships[0]->expires_on, 'Y-m-d');
+            $tday = date_format($today, 'Y-m-d');
+            if ($exp < $tday) {
+                $call = 3;
+            } elseif ($exp > $tday) {
+                $call = 1;
+            }
+            $mapReduce->emitIntermediate($member, $call);
+        };
+
+        $reducer = function ($members, $call, $mapReduce) {
+            $mapReduce->emit($members, $call);
+        };
+
+        $soonToDeactivateClassified = $soonToDeactivateNotRenewed
+            ->mapReduce($mapper, $reducer);
+
+        return $soonToDeactivateClassified;
     }
 
     /**
@@ -303,15 +443,22 @@ class MembersTable extends Table
 
             if ($this->save($member)) {
                 // Create default membership
-                if ((count($header) == 63) && isset($csvRow[62])) {
-                    $membershipExpiresOn = \DateTime::createFromFormat("d/m/Y", $csvRow[62]);
+                if ((count($header) >= 63) && isset($csvRow[62])) {
+                    $membershipStartsOn = \DateTime::createFromFormat("d/m/Y", $csvRow[62]);
                 } else {
-                    $membershipExpiresOn = $this->Memberships->getDefaultMembershipDate();
+                    $membershipStartsOn = $this->Memberships->getMembershipDefaultExpiration();
+                }
+
+                if ((count($header) >= 64) && isset($csvRow[63])) {
+                    $membershipExpiresOn = \DateTime::createFromFormat("d/m/Y", $csvRow[63]);
+                } else {
+                    $membershipExpiresOn = $this->Memberships->getMembershipDefaultExpiration();
                 }
 
                 $membership = $this->Memberships->newEntity();
                 $membership = $this->Memberships->patchEntity($membership, [
                     'member_id' => $member->id,
+                    'starts_on' => $membershipStartsOn,
                     'expires_on' => $membershipExpiresOn
                 ]);
 

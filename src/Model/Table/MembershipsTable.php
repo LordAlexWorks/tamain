@@ -53,6 +53,10 @@ class MembershipsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
+            ->requirePresence('starts_on', 'create')
+            ->notEmpty('starts_on');
+
+        $validator
             ->requirePresence('expires_on', 'create')
             ->notEmpty('expires_on');
 
@@ -78,14 +82,14 @@ class MembershipsTable extends Table
      *
      * @return date
      */
-    public function getDefaultMembershipDate()
+    public function getMembershipDefaultExpiration()
     {
         return (new \DateTime('now'))->modify('+1 year');
     }
 
 
     /**
-     * Query to return memberships within interval
+     * Query to return memberships expiring within interval
      * Does not include max_date
      *
      * @param \Cake\ORM\Query $query Query
@@ -115,7 +119,8 @@ class MembershipsTable extends Table
      */
     public function afterSave(Event $event, EntityInterface $entity, \ArrayObject $options)
     {
-        $expiration = $entity->expires_on;
+        $initialDate = $entity->starts_on;
+        $expirationDate = $entity->expires_on;
         
         $member = $this->Members->findById($entity->member_id)->first();
 
@@ -137,7 +142,8 @@ class MembershipsTable extends Table
                 $subscriberHash = md5(strtolower($member->email));
                 $mc->patch("lists/$listId/members/$subscriberHash", [
                     "merge_fields" => [
-                        "EXP_ON" => date_format($expiration, 'Y-m-d')
+                        "STARTS_ON" => date_format($initialDate, 'Y-m-d'),
+                        "EXP_ON" => date_format($expirationDate, 'Y-m-d')
                     ]
                 ]);
             } catch (Exception $e) {
@@ -147,7 +153,7 @@ class MembershipsTable extends Table
                     $this->error = 'An unknown error occurred when registering user in Mailchimp.';
                 }
             }
-        } elseif ($expiration >= new \DateTime) {
+        } elseif ($expirationDate >= new \DateTime) {
             // Active membership (not retroactive) and no memberships are active
             // or expired less than 30 days ago
             // Subscribe member
@@ -158,7 +164,8 @@ class MembershipsTable extends Table
                     "merge_fields" => [
                         "FNAME" => $member->firstname,
                         "LNAME" => $member->lastname,
-                        "EXP_ON" => date_format($expiration, 'Y-m-d')
+                        "STARTS_ON" => date_format($initialDate, 'Y-m-d'),
+                        "EXP_ON" => date_format($expirationDate, 'Y-m-d')
                     ]
                 ]);
             } catch (Exception $e) {
