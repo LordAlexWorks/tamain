@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `members` (
 CREATE TABLE IF NOT EXISTS `memberships` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `member_id` int(11) NOT NULL,
+  `starts_on` date NOT NULL,
   `expires_on` date NOT NULL,
   `created` date NOT NULL,
   `modified` datetime DEFAULT NULL,

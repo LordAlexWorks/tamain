@@ -42,7 +42,7 @@
         <div class="col-lg-3">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <span class="label label-info pull-right"><?= __('Annual') ?></span>
+                    <span class="label label-success pull-right"><?= __('Total') ?></span>
                     <h5><?= __('Re-registration rate') ?></h5>
                 </div>
                 <div class="ibox-content">
@@ -91,7 +91,10 @@
         <div class="col-lg-4">             
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5><?= __('New members this month') ?></h5>
+                    <h5>
+                        <?= __('New members this month') ?>
+                        <span class="label label-info pull-right"><?= __('Monthly') ?></span>
+                    </h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -108,11 +111,21 @@
                             <small><?= __('members') ?></small>
                         </div>
                         <div class="col-sm-8">
-                            <div class="row">
-                                <div class="stat-percent font-bold text-navy"><?= number_format($newMembersGrowth['-1 month']['growth'], 0) ?>%  <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
-                            </div>
-                            <div class="row">
-                                <div class="stat-percent font-bold text-info"><?= number_format($newMembersGrowth['-1 month']['growth'], 0) ?>%  <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
+                            <div class="pull-right">
+                                <?= $this->Statistics->displaySetOfStatistics(
+                                    'positive',
+                                    [
+                                        [
+                                            'percentage' => $newMembersGrowth['-1 month']['growth'],
+                                            'value' => $newMembersGrowth['-1 month']['count'],
+                                            'label' => __('last month')
+                                        ],[
+                                            'percentage' => $newMembersGrowth['-1 year']['growth'],
+                                            'value' => $newMembersGrowth['-1 year']['count'],
+                                            'label' => __('last year')
+                                        ]
+                                    ]
+                                ); ?>
                             </div>
                         </div>
                     </div>
@@ -167,9 +180,11 @@
         <div class="col-lg-4">             
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5><?= __('Soon to expire') ?></h5>
+                    <h5>
+                        <?= __('Soon to be deactivated') ?>
+                        <span class="label label-info pull-right"><?= __('Monthly') ?></span>
+                    </h5>
                     <div class="ibox-tools">
-                        <a class="text-navy"><i class="fa fa-file-excel-o text-navy"></i><span class="sr-only"><?= __('Export') ?></span></a>
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
                         </a>
@@ -179,24 +194,36 @@
                     </div>
                 </div>
                 <div class="ibox-content">
+                    <?php 
+                    $arraySoonToDeactivateMembers = $soonToDeactivateMembers->toArray();
+                    ?>
                     <div class="row">
-                        <div class="col-sm-6 col-md-4">
-                            <h1 class="no-margins">15</h1>
+                        <div class="col-sm-6 col-md-3">
+                            <h1 class="no-margins"><?= $soonToDeactivateGrowth['reference']['count'] ?></h1>
                             <small><?= __('members') ?></small>
                         </div>
-                        <div class="col-sm-6 col-md-4">
-                            <small><strong>8</strong> <?= __('in 1st call') ?></small><br>
-                            <small><strong>2</strong> <?= __('in 2nd call') ?></small><br>
-                            <small><strong>5</strong> <?= __('in 3rd call') ?></small>
+                        <div class="col-sm-6 col-md-4 text-center">
+                            <small><strong><?= count($arraySoonToDeactivateMembers[1]) ?></strong> <?= __('in 1st call') ?></small><br>
+                            <small><strong><?= count($arraySoonToDeactivateMembers[2]) ?></strong> <?= __('in 2nd call') ?></small><br>
+                            <small><strong><?= count($arraySoonToDeactivateMembers[3]) ?></strong> <?= __('in 3rd call') ?></small>
                         </div>
-                        <div class="col-sm-12 col-md-4">
-                            <div class="row">
-                                <div class="stat-percent font-bold text-navy">2% <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
+                        <div class="col-sm-12 col-md-5">
+                            <div class="pull-right">
+                                <?= $this->Statistics->displaySetOfStatistics(
+                                    'negative',
+                                    [
+                                        [
+                                            'percentage' => $soonToDeactivateGrowth['-1 month']['growth'],
+                                            'value' => $soonToDeactivateGrowth['-1 month']['count'],
+                                            'label' => __('last month')
+                                        ],[
+                                            'percentage' => $soonToDeactivateGrowth['-1 year']['growth'],
+                                            'value' => $soonToDeactivateGrowth['-1 year']['count'],
+                                            'label' => __('last year')
+                                        ]
+                                    ]
+                                ); ?>
                             </div>
-                            <div class="row">
-                                <div class="stat-percent font-bold text-info">4% <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -221,13 +248,16 @@
                         </thead>
                         <tbody>
                             <?php
-                            foreach ($newMembers as $member):
+                            $callColors = [ 1 => 'text-info', 2 => '', 3 => 'text-danger'];
+                            for ($call = 1; $call <= 3; $call++):
+                                $members = $arraySoonToDeactivateMembers[$call];
+                                foreach($members as $member):
                             ?>
                                 <tr>
                                     <td class="text-center">
-                                        <small>
+                                        <small class="<?= $callColors[$call] ?>">
                                             <i class="fa fa-calendar hidden-xs"></i>
-                                            <?= date_format($member->created, 'd/m') ?>
+                                            <?= date_format($member->memberships[0]->expires_on, 'd/m') ?>
                                         </small>
                                     </td>
                                     <td>
@@ -242,12 +272,12 @@
                                         </small>
                                     </td>
                                     <td class="text-center">
-                                        <small class="text-info">#2</small>
-                                        <!-- navy danger -->
+                                        <small class="<?= $callColors[$call] ?>">#<?= $call ?></small>
                                     </td>
                                 </tr>
                             <?php
-                            endforeach;
+                                endforeach;
+                            endfor;
                             ?>
                         </tbody>
                     </table>
@@ -258,7 +288,10 @@
         <div class="col-lg-4">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5><?= __('Recently expired') ?></h5>
+                    <h5>
+                        <?= __('Recently deactivated') ?>
+                        <span class="label label-info pull-right"><?= __('Monthly') ?></span>
+                    </h5>
                     <div class="ibox-tools">
                         <a class="collapse-link">
                             <i class="fa fa-chevron-up"></i>
@@ -271,22 +304,29 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-4">
-                            <h1 class="no-margins"><?= $metrics['numRecentlyDeactivatedMembers'] ?></h1>
+                            <h1 class="no-margins"><?= $recentlyDeactivatedGrowth['reference']['count'] ?></h1>
                             <small><?= __('members') ?></small>
                         </div>
                         <div class="col-sm-8">
-
-                            <div class="row">
-                                <div class="stat-percent font-bold text-navy">2% <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
-                            </div>
-                            <div class="row">
-                                <div class="stat-percent font-bold text-info">44% <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
-
+                            <div class="pull-right">
+                                <?= $this->Statistics->displaySetOfStatistics(
+                                    'negative',
+                                    [
+                                        [
+                                            'percentage' => $recentlyDeactivatedGrowth['-1 month']['growth'],
+                                            'value' => $recentlyDeactivatedGrowth['-1 month']['count'],
+                                            'label' => __('last month')
+                                        ],[
+                                            'percentage' => $recentlyDeactivatedGrowth['-1 year']['growth'],
+                                            'value' => $recentlyDeactivatedGrowth['-1 year']['count'],
+                                            'label' => __('last year')
+                                        ]
+                                    ]
+                                ); ?>
                             </div>
                         </div>
                     </div>
-                </div>
-                
+                </div>                
                 <div class="ibox-content table-responsive">
                     <button class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
                     <table class="table table-hover no-margins">

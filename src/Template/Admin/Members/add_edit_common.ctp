@@ -155,10 +155,9 @@
                             <fieldset class="form-horizontal">
                                 <div id="groupMembership">
                                     <?php
-                                        $input_options = [
+                                        $inputOptions = [
                                             "minYear" => date('Y') - 3,
                                             "maxYear" => date('Y') + 60,
-                                            "default" => $defaultMembershipDate,
                                             "day"=> [
                                                 "class" => "form-control"
                                             ],"month"=> [
@@ -171,6 +170,13 @@
                                                 "class" => "hide"
                                             ]
                                         ];
+
+                                        $startsOnOptions = $inputOptions;
+
+                                        $expiresOnOptions = array_merge_recursive(
+                                            $inputOptions,
+                                            ["default" => $membershipDefaultExpiration]
+                                        );
                                     ?>
                                     
                                     <?php
@@ -187,9 +193,16 @@
                                             </div>
 
                                             <div class="form-group form-inline">
-                                                <label class="col-sm-2 control-label"><?= __('Expires on') ?>:</label>
+                                                <label class="col-sm-2 control-label"><?= __('Initial date') ?>:</label>
                                                 <div class="col-sm-10">
-                                                    <?php  echo $this->Form->input("memberships.0.expires_on", $input_options); ?>
+                                                    <?php  echo $this->Form->input("memberships.0.starts_on", $startsOnOptions); ?>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group form-inline">
+                                                <label class="col-sm-2 control-label"><?= __('Final date') ?>:</label>
+                                                <div class="col-sm-10">
+                                                    <?php  echo $this->Form->input("memberships.0.expires_on", $expiresOnOptions); ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -208,9 +221,16 @@
                                             </div>
 
                                             <div class="form-group form-inline">
+                                                <label class="col-sm-2 control-label"><?= __('Initial date') ?>:</label>
+                                                <div class="col-sm-10">
+                                                    <?php  echo $this->Form->input("memberships.0.starts_on", $startsOnOptions); ?>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group form-inline">
                                                 <label class="col-sm-2 control-label"><?= __('Expires on') ?>:</label>
                                                 <div class="col-sm-10">
-                                                    <?php  echo $this->Form->input("memberships.$i.expires_on", $input_options); ?>
+                                                    <?php  echo $this->Form->input("memberships.$i.expires_on", $expiresOnOptions); ?>
                                                 </div>
                                             </div>
                                         </div>
