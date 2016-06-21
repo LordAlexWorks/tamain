@@ -64,14 +64,16 @@ class DashboardsController extends AppController
             array_merge_recursive($statsParams, $recentlyDeactivatedParams)
         );
 
-        if ($recentlyDeactivatedGrowth['reference']['query'])
-        $recentlyDeactivatedMembers = $recentlyDeactivatedGrowth['reference']['query']
+        if ($recentlyDeactivatedGrowth['reference']['query']) {
+            $recentlyDeactivatedMembers = $recentlyDeactivatedGrowth['reference']['query']
             ->contain('Memberships', [
                 'sort' => ['Memberships.expires_on' => 'DESC']
             ]);
+        }
 
         // Most common job
-        $mostCommonJob = $this->Members->find('mostCommon',
+        $mostCommonJob = $this->Members->find(
+            'mostCommon',
             ['mostCommonField' => 'Members.job']
         )->first();
 

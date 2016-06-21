@@ -24,18 +24,15 @@ class StatisticsHelper extends Helper
 
             if ($type == "positive") {
                 $textColor = "text-danger";
-            }
-            else {
+            } else {
                 $textColor = "text-navy";
             }
-        }
-        else {
+        } else {
             $icon = "fa-level-up";
             
             if ($type == "positive") {
                 $textColor = "text-navy";
-            }
-            else {
+            } else {
                 $textColor = "text-danger";
             }
         }

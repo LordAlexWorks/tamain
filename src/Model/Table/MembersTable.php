@@ -418,7 +418,7 @@ class MembersTable extends Table
     /**
      * Query to return the most common values of a field and its total count
      * of members created up to the reference date
-     * 
+     *
      * @example Query option parameters could be:
      *      $options['referenceDate'] => '2016-05-05' (default: today)
      *      $options['mostCommonField'] => 'Members.firstname' (default: Members.job)
@@ -436,10 +436,10 @@ class MembersTable extends Table
         $field = (array_key_exists("mostCommonField", $options) ? $options['mostCommonField'] : 'Members.job');
 
         $query->where(function ($exp, $q) use ($today, $field) {
-                return $exp->lte('Members.created',$today)
+                return $exp->lte('Members.created', $today)
                     ->isNotNull($field)
                     ->notEq($field, '');
-            })
+        })
             ->select([
                 'value' => $field,
                 'value_count' => $query->func()->count($field)
@@ -452,7 +452,7 @@ class MembersTable extends Table
 
     /**
      * Average age of all members created up to the reference date
-     * 
+     *
      * @example Query option parameters could be:
      *      $options['referenceDate'] => '2016-05-05' (default: today)
      * Result:
@@ -470,7 +470,7 @@ class MembersTable extends Table
                 return $exp->lte('Members.created', $today)
                     ->isNotNull('Members.birthdate')
                     ->gt('Members.birthdate', '0000-00-00');
-            })
+        })
             ->select([
                 'age' => 'avg(TIMESTAMPDIFF(YEAR,birthdate,CURDATE()))'
             ])
