@@ -259,9 +259,12 @@ class MembersTable extends Table
 
         $query
             ->where(['Members.id IN ' => $deactivated])
-            ->matching('Memberships', function ($q) use ($minDate) {
+            ->matching('Memberships', function ($q) use ($today, $minDate) {
                 return $q->where([
-                    'Memberships.expires_on >=' => $minDate
+                    'AND' => [
+                        'Memberships.starts_on <=' => $today,
+                        'Memberships.expires_on >=' => $minDate
+                    ]
                 ]);
             })
             ->distinct('Members.id');
@@ -373,6 +376,29 @@ class MembersTable extends Table
             ->mapReduce($mapper, $reducer);
 
         return $soonToDeactivateClassified;
+    }
+
+    /**
+     * Query to return members who have had more than one membership
+     * (they reregistrated)
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findReregistratedMembers(\Cake\ORM\Query $query, array $options)
+    {
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+
+        $query->select(['total_memberships' => $query->func()->count('Memberships.id')])
+            ->leftJoinWith('Memberships', function ($q) use ($today) {
+                return $q->where(['Memberships.starts_on <=' => $today]);
+            })
+            ->group(['Members.id'])
+            ->having(['total_memberships >=' => 2])
+            ->autoFields(true);
+
+        return $query;
     }
 
     /**

@@ -44,7 +44,7 @@
                                     ]
                                 ); ?>
                             </div>
-                            
+
                             <h1 class="no-margins"><?= $allMembersGrowth['reference']['count'] ?></h1>
                         </div>
                     </div>
@@ -60,15 +60,32 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h1 class="no-margins">60%</h1>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="stat-percent font-bold text-info">2% <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
-                            <div class="font-bold text-navy">44% <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <?= $this->Statistics->displaySetOfStatistics(
+                                    'positive',
+                                    [
+                                        [
+                                            'percentage' => $reregistratedGrowth['-1 month']['growth'],
+                                            'value' => $reregistratedGrowth['-1 month']['count'],
+                                            'label' => __('last month')
+                                        ],[
+                                            'percentage' => $reregistratedGrowth['-1 year']['growth'],
+                                            'value' => $reregistratedGrowth['-1 year']['count'],
+                                            'label' => __('last year')
+                                        ]
+                                    ]
+                                ); ?>
+                            </div>
+                            
+                            <h1 class="no-margins">
+                                <?= number_format($reregistrationRate, 0) ?>%
+                            </h1>
                         </div>
                     </div>
-                    <small><?= __('renew their membership') ?></small>
+                    <small>
+                        <?= __('of members ({0}) renew their membership', $reregistratedGrowth['reference']['count']) ?>
+                    </small>
                 </div>
             </div>
         </div>
