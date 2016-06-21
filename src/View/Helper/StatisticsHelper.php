@@ -19,12 +19,25 @@ class StatisticsHelper extends Helper
     {
         $percentage = number_format($percentage, 0);
 
-        if ((($type == "positive") && ($percentage < 0)) || (($type == "negative") && ($percentage > 0))) {
-            $textColor = "text-danger";
-            $icon = "fa-level-up";
-        } else {
-            $textColor = "text-navy";
+        if ($percentage < 0) {
             $icon = "fa-level-down";
+
+            if ($type == "positive") {
+                $textColor = "text-danger";
+            }
+            else {
+                $textColor = "text-navy";
+            }
+        }
+        else {
+            $icon = "fa-level-up";
+            
+            if ($type == "positive") {
+                $textColor = "text-navy";
+            }
+            else {
+                $textColor = "text-danger";
+            }
         }
 
         $html = "<div class='display-table-row stat-percent font-bold $textColor'>";
