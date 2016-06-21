@@ -126,7 +126,7 @@ class MembershipsTable extends Table
         $subscriberHash = md5(strtolower($member->email));
 
         $mailchimpKey = Configure::read('App.mailchimpKey');
-        $listId = "c38de9ebc8";
+        $listId = "eaad0ec6e1";
         $mc = new Mailchimp($mailchimpKey);
 
         $membershipsActiveOrRecent = $this->find('all')
