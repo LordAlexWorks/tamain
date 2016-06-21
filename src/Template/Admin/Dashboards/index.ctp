@@ -92,8 +92,11 @@
         <div class="col-lg-4">
             <div class="ibox-content ">
                 <h5 class="m-b-md"><?= __('Most common job title') ?></h5>
-                <h1 class="no-margins">Co-Fondatrice</h1>
-                <small>14% <?= __('({0} members)', 20) ?></small>
+                <h1 class="no-margins"><?= $mostCommonJob['value'] ?></h1>
+                <small>
+                    <?= number_format($mostCommonJobRate, 0) ?>%
+                    <?= __('({0} members)', $mostCommonJob['count']) ?>
+                </small>
             </div>
         </div>
         <div class="col-lg-2">

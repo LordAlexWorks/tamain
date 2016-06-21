@@ -70,8 +70,15 @@ class DashboardsController extends AppController
             ->contain('Memberships')
             ->order(['Memberships.expires_on' => 'DESC']);
 
-        // $metrics['averageAge'] = $this->Members->find('averageAge')->count();
-        // $metrics['mostCommonJob'] = $this->Members->find('mostCommonJob')->count();
+        // Most common job
+        $mostCommonJob = $this->Members->find('mostCommon',
+            ['mostCommonField' => 'Members.job']
+        )->first();
+
+        $mostCommonJobRate = 0;
+        if ($mostCommonJob['count']) {
+            $mostCommonJobRate = ($mostCommonJob['count'] / $allMembersGrowth['reference']['count']) * 100;
+        }
 
         $this->set(compact(
             'allMembersGrowth',
@@ -82,7 +89,9 @@ class DashboardsController extends AppController
             'soonToDeactivateMembers',
             'soonToDeactivateGrowth',
             'recentlyDeactivatedMembers',
-            'recentlyDeactivatedGrowth'
+            'recentlyDeactivatedGrowth',
+            'mostCommonJob',
+            'mostCommonJobRate'
         ));
     }
 }

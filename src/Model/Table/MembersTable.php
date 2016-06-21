@@ -402,6 +402,41 @@ class MembersTable extends Table
     }
 
     /**
+     * Query to return the most common values of a field and its total count
+     * created up to the reference date
+     * 
+     * @example Query option parameters could be:
+     *      $options['referenceDate'] => '2016-05-05'
+     *      $options['mostCommonField'] => 'Members.firstname'
+     * And each of its results would have two keys, 'value' and 'count':
+     *      $oneResult['value'] => 'Mary'
+     *      $oneResult['count'] => 18
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options. Can have keys "mostCommonField" and "referenceDate"
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findMostCommon(\Cake\ORM\Query $query, array $options)
+    {
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+        $field = (array_key_exists("mostCommonField", $options) ? $options['mostCommonField'] : 'Members.job');
+
+        $query->where(function ($exp, $q) use ($today, $field) {
+                return $exp->lte('Members.created',$today)
+                    ->isNotNull($field)
+                    ->notEq($field, '');
+            })
+            ->select([
+                'value' => $field,
+                'count' => $query->func()->count($field)
+            ])
+            ->group([$field])
+            ->order(['count' => 'DESC', $field => 'ASC']);
+
+        return $query;
+    }
+
+    /**
      * Create members based on data from a CSV file
      *
      * @param string $fileUploadId ID of the uploaded CSV file
