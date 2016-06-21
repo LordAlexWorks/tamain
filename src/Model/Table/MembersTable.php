@@ -257,6 +257,10 @@ class MembersTable extends Table
 
         $deactivated = $this->find('deactivatedMembers', $options)->extract('id')->toArray();
 
+        if (empty($deactivated)) {
+            return $query;
+        }
+
         $query
             ->where(['Members.id IN ' => $deactivated])
             ->matching('Memberships', function ($q) use ($today, $minDate) {
@@ -289,6 +293,10 @@ class MembersTable extends Table
         $minDate = $minDate->modify($dateModifier);
         
         $inactive = $this->find('inactiveMembers')->extract('id')->toArray();
+
+        if (empty($inactive)) {
+            return $query;
+        }
 
         $query
             ->where(['Members.id IN ' => $inactive])
@@ -403,17 +411,17 @@ class MembersTable extends Table
 
     /**
      * Query to return the most common values of a field and its total count
-     * created up to the reference date
+     * of members created up to the reference date
      * 
      * @example Query option parameters could be:
-     *      $options['referenceDate'] => '2016-05-05'
-     *      $options['mostCommonField'] => 'Members.firstname'
+     *      $options['referenceDate'] => '2016-05-05' (default: today)
+     *      $options['mostCommonField'] => 'Members.firstname' (default: Members.job)
      * And each of its results would have two keys, 'value' and 'count':
      *      $oneResult['value'] => 'Mary'
-     *      $oneResult['count'] => 18
+     *      $oneResult['value_count'] => 18
      *
      * @param \Cake\ORM\Query $query Query
-     * @param array $options Query options. Can have keys "mostCommonField" and "referenceDate"
+     * @param array $options Query options. May include "mostCommonField" and "referenceDate"
      * @return \Cake\ORM\Query Updated query
      */
     public function findMostCommon(\Cake\ORM\Query $query, array $options)
@@ -428,13 +436,43 @@ class MembersTable extends Table
             })
             ->select([
                 'value' => $field,
-                'count' => $query->func()->count($field)
+                'value_count' => $query->func()->count($field)
             ])
             ->group([$field])
-            ->order(['count' => 'DESC', $field => 'ASC']);
+            ->order(['value_count' => 'DESC', $field => 'ASC']);
 
         return $query;
     }
+
+    /**
+     * Average age of all members created up to the reference date
+     * 
+     * @example Query option parameters could be:
+     *      $options['referenceDate'] => '2016-05-05' (default: today)
+     * Result:
+     *      $result->first()['age'] => 38
+     *
+     * @param \Cake\ORM\Query $query Query
+     * @param array $options Query options
+     * @return \Cake\ORM\Query Updated query
+     */
+    public function findAverageAge(\Cake\ORM\Query $query, array $options)
+    {
+        $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+
+        $query->where(function ($exp, $q) use ($today) {
+                return $exp->lte('Members.created', $today)
+                    ->isNotNull('Members.birthdate')
+                    ->gt('Members.birthdate', '0000-00-00');
+            })
+            ->select([
+                'age' => 'avg(TIMESTAMPDIFF(YEAR,birthdate,CURDATE()))'
+            ])
+            ->limit(1);
+
+        return $query;
+    }
+
 
     /**
      * Create members based on data from a CSV file
@@ -484,15 +522,6 @@ class MembersTable extends Table
             
             $data = implode(", ", $memberData);
 
-            // Change member email to a variation of the admin's email,
-            // so that no one is spammed by tests
-            if (Configure::read('debug')) {
-                $this->updateAll(
-                    [ 'email' => "lobobot+tamarin" . $entity->id . "@lordalexworks.com" ],
-                    [ 'id' => $entity->id ]
-                );
-            }
-
             // Birthdate (optional)
             if (!is_null($csvRow[33])) {
                 $memberData['birthdate'] = \DateTime::createFromFormat("d/m/Y", $csvRow[33]);
@@ -503,6 +532,15 @@ class MembersTable extends Table
             $member = $this->patchEntity($member, $memberData);
 
             if ($this->save($member)) {
+                // Change member email to a variation of the admin's email,
+                // so that no one is spammed by tests
+                if (Configure::read('debug')) {
+                    $this->updateAll(
+                        [ 'email' => "lobobot+tamarin" . $member->id . "@lordalexworks.com" ],
+                        [ 'id' => $member->id ]
+                    );
+                }
+
                 // Create default membership
                 if ((count($header) >= 63) && isset($csvRow[62])) {
                     $membershipStartsOn = \DateTime::createFromFormat("d/m/Y", $csvRow[62]);

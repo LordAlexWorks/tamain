@@ -36,11 +36,6 @@ class DashboardsController extends AppController
             array_merge_recursive($statsParams, $reregistratedParams)
         );
 
-        $reregistrationRate = 0;
-        if ($allMembersGrowth['reference']['count']) {
-            $reregistrationRate = ($reregistratedGrowth['reference']['count'] / $allMembersGrowth['reference']['count']) * 100;
-        }
-
         // New members
         $newMembersParams = [ 'stats' => [ 'customFinder' => 'newMembers' ] ];
         $newMembersGrowth = $this->Members->find(
@@ -66,18 +61,25 @@ class DashboardsController extends AppController
             array_merge_recursive($statsParams, $recentlyDeactivatedParams)
         );
 
+        if ($recentlyDeactivatedGrowth['reference']['query'])
         $recentlyDeactivatedMembers = $recentlyDeactivatedGrowth['reference']['query']
-            ->contain('Memberships')
-            ->order(['Memberships.expires_on' => 'DESC']);
+            ->contain('Memberships', [
+                'sort' => ['Memberships.expires_on' => 'DESC']
+            ]);
 
         // Most common job
         $mostCommonJob = $this->Members->find('mostCommon',
             ['mostCommonField' => 'Members.job']
         )->first();
 
-        $mostCommonJobRate = 0;
-        if ($mostCommonJob['count']) {
-            $mostCommonJobRate = ($mostCommonJob['count'] / $allMembersGrowth['reference']['count']) * 100;
+        // Average age
+        $averageAge = $this->Members->find('averageAge')->first();
+
+        // Rates
+        $reregistrationRate = $mostCommonJobRate = 0;
+        if ($allMembersGrowth['reference']['count']) {
+            $reregistrationRate = ($reregistratedGrowth['reference']['count'] / $allMembersGrowth['reference']['count']) * 100;
+            $mostCommonJobRate = ($mostCommonJob['value_count'] / $allMembersGrowth['reference']['count']) * 100;
         }
 
         $this->set(compact(
@@ -91,7 +93,8 @@ class DashboardsController extends AppController
             'recentlyDeactivatedMembers',
             'recentlyDeactivatedGrowth',
             'mostCommonJob',
-            'mostCommonJobRate'
+            'mostCommonJobRate',
+            'averageAge'
         ));
     }
 }

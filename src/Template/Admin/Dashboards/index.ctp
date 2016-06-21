@@ -95,14 +95,14 @@
                 <h1 class="no-margins"><?= $mostCommonJob['value'] ?></h1>
                 <small>
                     <?= number_format($mostCommonJobRate, 0) ?>%
-                    <?= __('({0} members)', $mostCommonJob['count']) ?>
+                    <?= __('({0} members)', ($mostCommonJob['value_count'] ? $mostCommonJob['value_count'] : 0)) ?>
                 </small>
             </div>
         </div>
         <div class="col-lg-2">
             <div class="ibox-content ">
                 <h5 class="m-b-md"><?= __('Average age') ?></h5>
-                <h1 class="no-margins">35</h1>
+                <h1 class="no-margins"><?= number_format($averageAge['age'], 0) ?></h1>
                 <small><?= __('years-old') ?></small>
             </div>
         </div>
