@@ -46,7 +46,10 @@ class DashboardsController extends AppController
         $newMembers = $newMembersGrowth['reference']['query']->order(['Members.created' => 'DESC']);
 
         // Soon to deactivate
-        $soonToDeactivateParams = [ 'stats' => [ 'customFinder' => 'soonToDeactivateMembers' ] ];
+        $soonToDeactivateParams = [
+            'stats' => [ 'customFinder' => 'soonToDeactivateMembers' ],
+            'mapByCall' => true
+        ];
         $soonToDeactivateGrowth = $this->Members->find(
             'countGrowth',
             array_merge_recursive($statsParams, $soonToDeactivateParams)

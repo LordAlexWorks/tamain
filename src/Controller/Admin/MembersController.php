@@ -164,8 +164,8 @@ class MembersController extends AppController
     {
         if ($this->request->is('post')) {
             $standardFilter = $this->request->data('standardFilter');
+            // Existing find queries
             if ($standardFilter && !empty($standardFilter)) {
-                // Existing filters: new members and expired members
                 $members = $this->Members->find($standardFilter);
             } else {
                 // Custom filters

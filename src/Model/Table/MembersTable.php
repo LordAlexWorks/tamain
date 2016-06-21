@@ -322,6 +322,7 @@ class MembersTable extends Table
     public function findSoonToDeactivateMembers(\Cake\ORM\Query $query, array $options)
     {
         $today = (array_key_exists("referenceDate", $options) ? $options['referenceDate'] : new \DateTime());
+        $mapByCall = (array_key_exists("mapByCall", $options) ? $options['mapByCall'] : false);
 
         $dateBeforeExpiration = clone $today;
         $dateBeforeExpiration->modify($this->settingsFilters['expirationWarnings']['beforeExpiration']);
@@ -363,7 +364,12 @@ class MembersTable extends Table
                 ]])
             ->distinct('Members.id');
 
-        // Add information about which warning has been sent
+        // If not needed to map by call
+        if (!$mapByCall) {
+            return $soonToDeactivateNotRenewed;
+        }
+
+        // Map by call (Add information about which warning has been sent)
         $mapper = function ($member, $key, $mapReduce) use ($today) {
             $call = 2;
             $exp = date_format($member->memberships[0]->expires_on, 'Y-m-d');

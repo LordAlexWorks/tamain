@@ -164,7 +164,18 @@
                     </div>
                 </div>
                 <div class="ibox-content table-responsive">
-                    <button class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                    <?php
+                    // EXPORT
+                    echo $this->Form->create(null, [
+                        'url' => ['controller' => 'Members', 'action' => 'filter']
+                    ]);
+                    echo $this->Form->hidden('standardFilter', ['value' => 'newMembers']);
+                        ?>
+                        <button type="submit" class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                        <?php
+                    echo $this->Form->end();
+                    ?>
+
                     <table class="table table-hover no-margins">
                         <thead>
                             <tr>
@@ -261,7 +272,18 @@
                     </div>
                 </div>
                 <div class="ibox-content table-responsive">
-                    <button class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                    <?php
+                    // EXPORT
+                    echo $this->Form->create(null, [
+                        'url' => ['controller' => 'Members', 'action' => 'filter']
+                    ]);
+                    echo $this->Form->hidden('standardFilter', ['value' => 'soonToDeactivateMembers']);
+                        ?>
+                        <button type="submit" class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                        <?php
+                    echo $this->Form->end();
+                    ?>
+
                     <table class="table table-hover no-margins">
                         <thead>
                             <tr>
@@ -361,7 +383,18 @@
                     </div>
                 </div>                
                 <div class="ibox-content table-responsive">
-                    <button class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                    <?php
+                    // EXPORT
+                    echo $this->Form->create(null, [
+                        'url' => ['controller' => 'Members', 'action' => 'filter']
+                    ]);
+                    echo $this->Form->hidden('standardFilter', ['value' => 'recentlyDeactivatedMembers']);
+                        ?>
+                        <button type="submit" class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                        <?php
+                    echo $this->Form->end();
+                    ?>
+
                     <table class="table table-hover no-margins">
                         <thead>
                             <tr>
