@@ -29,6 +29,13 @@ class DashboardsController extends AppController
 
         $allMembersGrowth = $this->Members->find('countGrowth', $statsParams);
 
+        // Members that renewed membership
+        $reregistratedParams = [ 'stats' => [ 'customFinder' => 'reregistratedMembers' ] ];
+        $reregistratedGrowth = $this->Members->find(
+            'countGrowth',
+            array_merge_recursive($statsParams, $reregistratedParams)
+        );
+
         // New members
         $newMembersParams = [ 'stats' => [ 'customFinder' => 'newMembers' ] ];
         $newMembersGrowth = $this->Members->find(
@@ -36,19 +43,20 @@ class DashboardsController extends AppController
             array_merge_recursive($statsParams, $newMembersParams)
         );
 
-        $newMembers = $this->Members->find('newMembers')
-            ->order(['Members.created' => 'DESC']);
+        $newMembers = $newMembersGrowth['reference']['query']->order(['Members.created' => 'DESC']);
 
         // Soon to deactivate
-        $soonToDeactivateParams = [ 'stats' => [ 'customFinder' => 'soonToDeactivateMembers' ] ];
+        $soonToDeactivateParams = [
+            'stats' => [ 'customFinder' => 'soonToDeactivateMembers' ],
+            'mapByCall' => true
+        ];
         $soonToDeactivateGrowth = $this->Members->find(
             'countGrowth',
             array_merge_recursive($statsParams, $soonToDeactivateParams)
         );
 
-        $soonToDeactivateMembers = $this->Members
-            ->find('soonToDeactivateMembers');
-        
+        $soonToDeactivateMembers = $soonToDeactivateGrowth['reference']['query'];
+
         // Recently deactivated
         $recentlyDeactivatedParams = [ 'stats' => [ 'customFinder' => 'recentlyDeactivatedMembers' ] ];
         $recentlyDeactivatedGrowth = $this->Members->find(
@@ -56,22 +64,42 @@ class DashboardsController extends AppController
             array_merge_recursive($statsParams, $recentlyDeactivatedParams)
         );
 
-        $recentlyDeactivatedMembers = $this->Members
-            ->find('recentlyDeactivatedMembers')
-            ->contain(['Memberships'])
-            ->order(['Memberships.expires_on' => 'DESC']);
+        if ($recentlyDeactivatedGrowth['reference']['query']) {
+            $recentlyDeactivatedMembers = $recentlyDeactivatedGrowth['reference']['query']
+            ->contain('Memberships', [
+                'sort' => ['Memberships.expires_on' => 'DESC']
+            ]);
+        }
 
-        // $metrics['averageAge'] = $this->Members->find('averageAge')->count();
-        // $metrics['mostCommonJob'] = $this->Members->find('mostCommonJob')->count();
+        // Most common job
+        $mostCommonJob = $this->Members->find(
+            'mostCommon',
+            ['mostCommonField' => 'Members.job']
+        )->first();
+
+        // Average age
+        $averageAge = $this->Members->find('averageAge')->first();
+
+        // Rates
+        $reregistrationRate = $mostCommonJobRate = 0;
+        if ($allMembersGrowth['reference']['count']) {
+            $reregistrationRate = ($reregistratedGrowth['reference']['count'] / $allMembersGrowth['reference']['count']) * 100;
+            $mostCommonJobRate = ($mostCommonJob['value_count'] / $allMembersGrowth['reference']['count']) * 100;
+        }
 
         $this->set(compact(
             'allMembersGrowth',
+            'reregistratedGrowth',
+            'reregistrationRate',
             'newMembers',
             'newMembersGrowth',
             'soonToDeactivateMembers',
             'soonToDeactivateGrowth',
             'recentlyDeactivatedMembers',
-            'recentlyDeactivatedGrowth'
+            'recentlyDeactivatedGrowth',
+            'mostCommonJob',
+            'mostCommonJobRate',
+            'averageAge'
         ));
     }
 }

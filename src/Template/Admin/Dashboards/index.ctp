@@ -27,12 +27,25 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <?= $this->Statistics->displaySetOfStatistics(
+                                    'positive',
+                                    [
+                                        [
+                                            'percentage' => $allMembersGrowth['-1 month']['growth'],
+                                            'value' => $allMembersGrowth['-1 month']['count'],
+                                            'label' => __('last month')
+                                        ],[
+                                            'percentage' => $allMembersGrowth['-1 year']['growth'],
+                                            'value' => $allMembersGrowth['-1 year']['count'],
+                                            'label' => __('last year')
+                                        ]
+                                    ]
+                                ); ?>
+                            </div>
+
                             <h1 class="no-margins"><?= $allMembersGrowth['reference']['count'] ?></h1>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="stat-percent font-bold text-info"><?= number_format($allMembersGrowth['-1 month']['growth'], 0) ?>% <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
-                            <div class="font-bold text-navy"><?= number_format($allMembersGrowth['-1 year']['growth'], 0) ?>% <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
                         </div>
                     </div>
                     <small><?= __('members registered') ?></small>
@@ -47,29 +60,49 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h1 class="no-margins">60%</h1>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="stat-percent font-bold text-info">2% <i class="fa fa-level-up"></i> <small> <?= __('last month') ?></small></div>
-                            <div class="font-bold text-navy">44% <i class="fa fa-level-up"></i> <small> <?= __('last year') ?></small></div>
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <?= $this->Statistics->displaySetOfStatistics(
+                                    'positive',
+                                    [
+                                        [
+                                            'percentage' => $reregistratedGrowth['-1 month']['growth'],
+                                            'value' => $reregistratedGrowth['-1 month']['count'],
+                                            'label' => __('last month')
+                                        ],[
+                                            'percentage' => $reregistratedGrowth['-1 year']['growth'],
+                                            'value' => $reregistratedGrowth['-1 year']['count'],
+                                            'label' => __('last year')
+                                        ]
+                                    ]
+                                ); ?>
+                            </div>
+                            
+                            <h1 class="no-margins">
+                                <?= number_format($reregistrationRate, 0) ?>%
+                            </h1>
                         </div>
                     </div>
-                    <small><?= __('renew their membership') ?></small>
+                    <small>
+                        <?= __('of members ({0}) renew their membership', $reregistratedGrowth['reference']['count']) ?>
+                    </small>
                 </div>
             </div>
         </div>
         <div class="col-lg-4">
             <div class="ibox-content ">
                 <h5 class="m-b-md"><?= __('Most common job title') ?></h5>
-                <h1 class="no-margins">Co-Fondatrice</h1>
-                <small>14% <?= __('({0} members)', 20) ?></small>
+                <h1 class="no-margins"><?= $mostCommonJob['value'] ?></h1>
+                <small>
+                    <?= number_format($mostCommonJobRate, 0) ?>%
+                    <?= __('({0} members)', ($mostCommonJob['value_count'] ? $mostCommonJob['value_count'] : 0)) ?>
+                </small>
             </div>
         </div>
         <div class="col-lg-2">
             <div class="ibox-content ">
                 <h5 class="m-b-md"><?= __('Average age') ?></h5>
-                <h1 class="no-margins">35</h1>
+                <h1 class="no-margins"><?= number_format($averageAge['age'], 0) ?></h1>
                 <small><?= __('years-old') ?></small>
             </div>
         </div>
@@ -131,7 +164,18 @@
                     </div>
                 </div>
                 <div class="ibox-content table-responsive">
-                    <button class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                    <?php
+                    // EXPORT
+                    echo $this->Form->create(null, [
+                        'url' => ['controller' => 'Members', 'action' => 'filter']
+                    ]);
+                    echo $this->Form->hidden('standardFilter', ['value' => 'newMembers']);
+                        ?>
+                        <button type="submit" class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                        <?php
+                    echo $this->Form->end();
+                    ?>
+
                     <table class="table table-hover no-margins">
                         <thead>
                             <tr>
@@ -195,7 +239,7 @@
                 </div>
                 <div class="ibox-content">
                     <?php 
-                    $arraySoonToDeactivateMembers = $soonToDeactivateMembers->toArray();
+                    $arrSoonDeactivate = $soonToDeactivateMembers->toArray();
                     ?>
                     <div class="row">
                         <div class="col-sm-6 col-md-3">
@@ -203,9 +247,9 @@
                             <small><?= __('members') ?></small>
                         </div>
                         <div class="col-sm-6 col-md-4 text-center">
-                            <small><strong><?= count($arraySoonToDeactivateMembers[1]) ?></strong> <?= __('in 1st call') ?></small><br>
-                            <small><strong><?= count($arraySoonToDeactivateMembers[2]) ?></strong> <?= __('in 2nd call') ?></small><br>
-                            <small><strong><?= count($arraySoonToDeactivateMembers[3]) ?></strong> <?= __('in 3rd call') ?></small>
+                            <small><strong><?= (array_key_exists(1, $arrSoonDeactivate) ? count($arrSoonDeactivate[1]) : 0) ?></strong> <?= __('in 1st call') ?></small><br>
+                            <small><strong><?= (array_key_exists(2, $arrSoonDeactivate) ? count($arrSoonDeactivate[2]) : 0) ?></strong> <?= __('in 2nd call') ?></small><br>
+                            <small><strong><?= (array_key_exists(3, $arrSoonDeactivate) ? count($arrSoonDeactivate[3]) : 0) ?></strong> <?= __('in 3rd call') ?></small>
                         </div>
                         <div class="col-sm-12 col-md-5">
                             <div class="pull-right">
@@ -228,7 +272,18 @@
                     </div>
                 </div>
                 <div class="ibox-content table-responsive">
-                    <button class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                    <?php
+                    // EXPORT
+                    echo $this->Form->create(null, [
+                        'url' => ['controller' => 'Members', 'action' => 'filter']
+                    ]);
+                    echo $this->Form->hidden('standardFilter', ['value' => 'soonToDeactivateMembers']);
+                        ?>
+                        <button type="submit" class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                        <?php
+                    echo $this->Form->end();
+                    ?>
+
                     <table class="table table-hover no-margins">
                         <thead>
                             <tr>
@@ -250,7 +305,7 @@
                             <?php
                             $callColors = [ 1 => 'text-info', 2 => '', 3 => 'text-danger'];
                             for ($call = 1; $call <= 3; $call++):
-                                $members = $arraySoonToDeactivateMembers[$call];
+                                $members = (array_key_exists($call, $arrSoonDeactivate) ? $arrSoonDeactivate[$call] : []);
                                 foreach($members as $member):
                             ?>
                                 <tr>
@@ -328,7 +383,18 @@
                     </div>
                 </div>                
                 <div class="ibox-content table-responsive">
-                    <button class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                    <?php
+                    // EXPORT
+                    echo $this->Form->create(null, [
+                        'url' => ['controller' => 'Members', 'action' => 'filter']
+                    ]);
+                    echo $this->Form->hidden('standardFilter', ['value' => 'recentlyDeactivatedMembers']);
+                        ?>
+                        <button type="submit" class="btn btn-primary btn-block m-t"><i class="fa fa-file-excel-o"></i> <?= __('Export') ?></button>
+                        <?php
+                    echo $this->Form->end();
+                    ?>
+
                     <table class="table table-hover no-margins">
                         <thead>
                             <tr>

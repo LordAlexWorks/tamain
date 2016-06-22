@@ -17,7 +17,10 @@ class GrowthStatisticsBehavior extends Behavior
     public function calculateGrowth($finalValue, $startValue)
     {
         if ($startValue <= 0) {
-            return 100;
+            if ($finalValue > 0) {
+                return 100;
+            }
+            return 0;
         }
         if (is_numeric($finalValue) && is_numeric($startValue)) {
             return (($finalValue - $startValue) / $startValue) * 100;

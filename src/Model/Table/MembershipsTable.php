@@ -123,6 +123,7 @@ class MembershipsTable extends Table
         $expirationDate = $entity->expires_on;
         
         $member = $this->Members->findById($entity->member_id)->first();
+        $subscriberHash = md5(strtolower($member->email));
 
         $mailchimpKey = Configure::read('App.mailchimpKey');
         $listId = "eaad0ec6e1";
@@ -139,8 +140,8 @@ class MembershipsTable extends Table
             // Already subscribed to mailchimp in previous membership
             // Update expiration field if this one is higher
             try {
-                $subscriberHash = md5(strtolower($member->email));
                 $mc->patch("lists/$listId/members/$subscriberHash", [
+                    "status" => "subscribed",
                     "merge_fields" => [
                         "STARTS_ON" => date_format($initialDate, 'Y-m-d'),
                         "EXP_ON" => date_format($expirationDate, 'Y-m-d')
@@ -158,7 +159,7 @@ class MembershipsTable extends Table
             // or expired less than 30 days ago
             // Subscribe member
             try {
-                $mc->post("lists/$listId/members", [
+                $mc->put("lists/$listId/members/$subscriberHash", [
                     "status" => "subscribed",
                     "email_address" => $member->email,
                     "merge_fields" => [
