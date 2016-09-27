@@ -2,10 +2,7 @@
     <div class="sidebar-collapse">
         <ul class="nav metismenu" id="side-menu">
             <li class="nav-header">
-                <div class="dropdown profile-element"> <span>
-                        <img alt="image" class="img-circle" width="50" height="50"
-                             src="<?php echo $this->request->webroot; ?>img/admin.jpeg" />
-                    </span>
+                <div class="dropdown profile-element">
                     <span class="clear"> 
                         <span class="block m-t-xs"> 
                             <strong class="font-bold" style="color: #fff;">
