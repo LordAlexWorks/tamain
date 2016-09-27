@@ -6,13 +6,51 @@
                     <span class="clear"> 
                         <span class="block m-t-xs"> 
                             <strong class="font-bold" style="color: #fff;">
-                                <?php 
-                                $session = $this->request->session();
-                                echo $session->read('Auth.User.first_name').
-                                        ' '.$session->read('Auth.User.last_name'); 
+                                <?php
+                                echo $loggedInUser['full_name'];
                                 ?>
                             </strong>
-                    </span> 
+                    </span>
+                    <br />
+
+                    <?php
+                    if (!isset($currentOrganization) || !$currentOrganization): ?>
+                        <a class="dropdown-toggle" href="<?php echo $this->Url->build([ 'controller' => 'Organizations', 'action' => 'choose' ]); ?>">
+                            <span class="text-muted text-xs block">
+                                <?= __('Choose organization') ?>
+                                &nbsp; <span class="fa fa-angle-right"></span>
+                            </span>
+                        </a>
+                        <?php
+                    else: ?>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-haspopup="true" aria-expanded="false">
+                            <span id="organization_name" class="text-muted text-xs block">
+                                <?= $currentOrganization->name ?>
+                                <b class="caret"></b>
+                            </span>
+                        </a>
+
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs" aria-labelledby="organization_name">
+                            <?php
+                            if ($loggedInUser['organizations']->count() > 1):
+                                foreach ($loggedInUser['organizations'] as $organization):
+                                    if ($organization['id'] == $currentOrganization->id) {
+                                        continue;
+                                    }
+                                    ?>
+                                    <li><a href="<?php echo $this->Url->build([ 'controller' => 'Organizations', 'action' => 'choose', $organization['id'] ]); ?>"><?= $organization['name'] ?></a></li>
+                                    <?php
+                                endforeach;
+                                ?>
+                                <li class="divider"></li>
+                                <?php
+                            endif;
+                            ?>
+                            <li><a href="<?php echo $this->Url->build([ 'controller' => 'Organizations', 'action' => 'index' ]); ?>"><?= __('Manage organizations') ?></a></li>
+                        </ul>
+                        <?php
+                    endif;
+                    ?>
                 </div>
             </li>
             <li class="<?php echo $this->request->controller == 'Dashboard' ? 'active' : ''; ?>">

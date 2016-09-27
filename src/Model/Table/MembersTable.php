@@ -39,6 +39,8 @@ class MembersTable extends Table
         $this->hasMany('Memberships', [
             'foreignKey' => 'member_id'
         ]);
+
+        $this->belongsTo('Organizations');
     }
 
     /**

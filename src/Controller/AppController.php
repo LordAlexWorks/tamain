@@ -72,6 +72,38 @@ class AppController extends Controller
         // Allow public function without prefix ones
         if (empty($this->request->params['prefix'])) {
             $this->Auth->allow();
+            return;
+        }
+
+        // Functions with prefix will need an organization
+        if (!$this->Auth->user()) {
+            $this->Auth->deny();
+            return;
+        }
+
+        $this->loggedInUser = $this->Auth->user();
+
+
+        $this->loadModel('Organizations');
+        $this->loggedInUser['organizations'] = $this->Organizations->find('all')
+            ->matching('Users', function ($q) {
+                return $q->where(['Users.id' => $this->loggedInUser['id']]);
+            })
+            ->select(['id', 'name']);
+
+        // Current organization
+        $currentOrganizationId = $this->request->session()->read('CurrentOrganizationId');
+        if ($currentOrganizationId) {
+            $this->currentOrganization = $this->Organizations->findById($currentOrganizationId)->first();
+        }
+        else {
+            if (($this->request->params['controller'] == 'Organizations') 
+                && ($this->request->params['action'] == 'choose')) {
+                return;
+            }
+            else {
+                $this->redirect(['controller' => 'Organizations', 'action' => 'choose']);
+            }
         }
     }
 
@@ -83,6 +115,13 @@ class AppController extends Controller
      */
     public function beforeRender(Event $event)
     {
+        if (isset($this->loggedInUser)) {
+            $this->set('loggedInUser', $this->loggedInUser);
+        }
+        if (isset($this->currentOrganization)) {
+            $this->set('currentOrganization', $this->currentOrganization);
+        }
+
         if (!array_key_exists('_serialize', $this->viewVars) &&
             in_array($this->response->type(), ['application/json', 'application/xml'])
         ) {
