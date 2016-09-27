@@ -288,7 +288,7 @@
                         <thead>
                             <tr>
                                 <th class="col-xs-3 text-center">
-                                    <?= __('Expirat.') ?>
+                                    <?= __('Expiration date') ?>
                                 </th>
                                 <th class="col-xs-7 col-sm-4">
                                     <?= __('Name') ?>
@@ -312,7 +312,7 @@
                                     <td class="text-center">
                                         <small class="<?= $callColors[$call] ?>">
                                             <i class="fa fa-calendar hidden-xs"></i>
-                                            <?= date_format($member->memberships[0]->expires_on, 'd/m') ?>
+                                            <?= date_format($member->memberships[0]->expires_on, 'd/m/Y') ?>
                                         </small>
                                     </td>
                                     <td>
@@ -399,7 +399,7 @@
                         <thead>
                             <tr>
                                 <th class="col-xs-3 text-center">
-                                    <?= __('Expirat.') ?>
+                                    <?= __('Expiration date') ?>
                                 </th>
                                 <th class="col-xs-9 col-sm-6">
                                     <?= __('Name') ?>
@@ -417,7 +417,7 @@
                                     <td class="text-center">
                                         <small>
                                             <i class="fa fa-calendar hidden-xs"></i>
-                                            <?= date_format($member->memberships[0]->expires_on, 'd/m') ?>
+                                            <?= date_format($member->memberships[0]->expires_on, 'd/m/Y') ?>
                                         </small>
                                     </td>
                                     <td>
