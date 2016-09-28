@@ -486,9 +486,10 @@ class MembersTable extends Table
      * Create members based on data from a CSV file
      *
      * @param string $fileUploadId ID of the uploaded CSV file
+     * @param string $organizationId ID of the organization the members will belong to
      * @return array Messages and errors during import
      */
-    public function import($fileUploadId)
+    public function import($fileUploadId, $organizationId)
     {
         $fileUploads = TableRegistry::get('FileUploads');
         $membersFile = $fileUploads->findById($fileUploadId)->first();
@@ -525,7 +526,8 @@ class MembersTable extends Table
                 'company' => $csvRow[39],
                 'twitter' => $csvRow[52],
                 'email' => $csvRow[31],
-                'active' => true
+                'active' => true,
+                'organization_id' => $organizationId
             ];
             
             $data = implode(", ", $memberData);
