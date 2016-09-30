@@ -5,7 +5,12 @@
         </div>
         <ul class="nav navbar-top-links navbar-right">
             <li>
-                <h2 class="m-r-sm welcome-message"><?= __("Welcome to Tamarin's Admin Panel") ?></h2>
+                <?php
+                if (isset($currentOrganization) && $currentOrganization): ?>
+                    <h2 class="m-r-sm welcome-message"><?= __("Welcome to {0}'s Admin Panel", $currentOrganization->name) ?></h2>
+                    <?php
+                endif;
+                ?>
             </li>
             <li>
                 <a href="<?php echo $this->Url->build([

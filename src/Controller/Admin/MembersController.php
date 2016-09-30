@@ -52,6 +52,7 @@ class MembersController extends AppController
         $member = $this->Members->newEntity();
         if ($this->request->is('post')) {
             $member = $this->Members->patchEntity($member, $this->request->data);
+            $member['organization_id'] = $this->currentOrganization['id'];
             if ($this->Members->save($member)) {
                 $this->Flash->success(__('The member has been saved.'));
                 return $this->redirect(['action' => 'index']);
@@ -137,7 +138,7 @@ class MembersController extends AppController
 
             if ($this->FileUploads->save($fileUpload)) {
                 // Import members
-                $importMessages = $this->Members->import($fileUpload->id);
+                $importMessages = $this->Members->import($fileUpload->id, $this->currentOrganization['id']);
                 debug($importMessages);
 
                 if (empty($importMessages['errors'])) {

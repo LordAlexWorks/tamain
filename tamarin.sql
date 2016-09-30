@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `members` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
+  `organization_id` int(11) NOT NULL,
   `birthdate` date NOT NULL,
   `email` varchar(64) NOT NULL,
   `job` varchar(255) NOT NULL,
@@ -99,6 +100,24 @@ CREATE TABLE IF NOT EXISTS `file_uploads` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `organizations`
+--
+
+CREATE TABLE IF NOT EXISTS `organizations` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL,
+  `mailchimp_api_key` varchar(64) DEFAULT NULL,
+  `mailchimp_active_members_list` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

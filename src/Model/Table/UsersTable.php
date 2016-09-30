@@ -33,6 +33,10 @@ class UsersTable extends Table
         $this->hasMany('FileUploads', [
             'foreignKey' => 'user_id'
         ]);
+
+        $this->belongsToMany('Organizations', [
+            'joinTable' => 'users_organizations',
+        ]);
     }
 
     /**

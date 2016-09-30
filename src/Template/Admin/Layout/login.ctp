@@ -7,10 +7,10 @@
     <title> <?= $this->fetch('title') ?> </title>
     <?= $this->Html->meta('icon') ?>
     <?= $this->fetch('meta') ?>
-    <?= $this->Html->css(['bootstrap.min', 'font-awesome/css/font-awesome']) ?>
+    <?= $this->Html->css(['bootstrap.min']) ?>
     <?= $this->Html->css(['animate', 'style']) ?>
     <?= $this->fetch('css') ?>
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 </head>
 
 <body class="gray-bg">

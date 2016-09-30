@@ -20,11 +20,14 @@ class DashboardsController extends AppController
     {
         $this->loadModel('Members');
 
+        $organizationParam = [ 'organization_id' => $this->currentOrganization['id'] ];
+
         $statsParams = [
             'stats' => [
                 'field' => 'created',
                 'dates' => ['-1 month', '-1 year']
-            ]
+            ],
+            'conditions' => $organizationParam
         ];
 
         $allMembersGrowth = $this->Members->find('countGrowth', $statsParams);
@@ -72,13 +75,15 @@ class DashboardsController extends AppController
         }
 
         // Most common job
-        $mostCommonJob = $this->Members->find(
-            'mostCommon',
-            ['mostCommonField' => 'Members.job']
-        )->first();
+        $mostCommonJob = $this->Members->find('mostCommon', [
+                'mostCommonField' => 'Members.job',
+                'conditions' => $organizationParam
+            ])->first();
 
         // Average age
-        $averageAge = $this->Members->find('averageAge')->first();
+        $averageAge = $this->Members->find('averageAge', [
+                'conditions' => $organizationParam
+            ])->first();
 
         // Rates
         $reregistrationRate = $mostCommonJobRate = 0;
