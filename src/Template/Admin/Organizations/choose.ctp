@@ -19,8 +19,13 @@
 <div class="wrapper wrapper-content animated fadeInRight ecommerce">
     <div class="row">
         <div class="col-lg-12 text-center">
-            <form method="post">
-                <?php
+
+            <?php
+            if (count($loggedInUser['organizations']) < 1):
+                echo '<p>' . __('Currently, you are not the administrator of any organizations.') . '</p>';
+            else:
+                echo '<p>' . __('After you choose, you can select another organization in the left menu, below your name.') . '</p> <br />';
+
                 foreach ($loggedInUser['organizations'] as $organization): ?>
 
                     <a href="<?php echo $this->Url->build(['controller' => 'Organizations', 'action' => 'choose', $organization['id']]); ?>" class="btn btn-info btn-lg">
@@ -29,12 +34,6 @@
                     <br /><br />
                     <?php
                 endforeach;
-                ?>
-            </form>
-
-            <?php
-            if (count($loggedInUser['organizations']) < 1):
-                echo '<p>' . __('Currently, you are not the administrator of any organizations.') . '</p>';
             endif;
             ?>
 

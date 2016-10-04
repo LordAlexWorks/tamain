@@ -19,7 +19,10 @@ class MembersController extends AppController
      */
     public function index()
     {
-        $members = $this->paginate($this->Members);
+        $members = $this->Members->find('all', [
+            'conditions' => [ 'organization_id' => $this->currentOrganization['id'] ]
+        ]);
+        $members = $this->paginate($members);
 
         $this->set(compact('members'));
         $this->set('_serialize', ['members']);
@@ -139,7 +142,6 @@ class MembersController extends AppController
             if ($this->FileUploads->save($fileUpload)) {
                 // Import members
                 $importMessages = $this->Members->import($fileUpload->id, $this->currentOrganization['id']);
-                debug($importMessages);
 
                 if (empty($importMessages['errors'])) {
                     $this->Flash->success(__('All members have been imported!'));
@@ -181,6 +183,7 @@ class MembersController extends AppController
             }
 
             $members = $members
+                ->where([ 'organization_id' => $this->currentOrganization['id'] ])
                 ->contain(['Memberships' => [
                     'sort' => ['Memberships.expires_on' => 'DESC']
                 ]])

@@ -555,7 +555,7 @@ class MembersTable extends Table
                 if ((count($header) >= 63) && isset($csvRow[62])) {
                     $membershipStartsOn = \DateTime::createFromFormat("d/m/Y", $csvRow[62]);
                 } else {
-                    $membershipStartsOn = $this->Memberships->getMembershipDefaultExpiration();
+                    $membershipStartsOn = new \DateTime();
                 }
 
                 if ((count($header) >= 64) && isset($csvRow[63])) {
