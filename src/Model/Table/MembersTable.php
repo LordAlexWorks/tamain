@@ -552,15 +552,19 @@ class MembersTable extends Table
                 }
 
                 // Create default membership
+                $membershipStartsOn = $membershipExpiresOn = false;
+
                 if ((count($header) >= 63) && isset($csvRow[62])) {
                     $membershipStartsOn = \DateTime::createFromFormat("d/m/Y", $csvRow[62]);
-                } else {
-                    $membershipStartsOn = new \DateTime();
                 }
+                if (!$membershipStartsOn) { // No membership start date, or parsing problems
+                    $membershipStartsOn = new \DateTime();
+                };
 
                 if ((count($header) >= 64) && isset($csvRow[63])) {
                     $membershipExpiresOn = \DateTime::createFromFormat("d/m/Y", $csvRow[63]);
-                } else {
+                }
+                if (!$membershipExpiresOn) { // No membership expiration date, or parsing problems
                     $membershipExpiresOn = $this->Memberships->getMembershipDefaultExpiration();
                 }
 
