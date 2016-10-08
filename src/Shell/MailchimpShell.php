@@ -17,7 +17,7 @@ class MailchimpShell extends Shell
      */
     public function unsubscribeDeactivatedMembers()
     {
-        $this->loadModel('Members');
+        $this->loadModel('Organizations');
         $numDaysExpiration = 30;
 
         // Because we only care about the date, not the time,
@@ -25,50 +25,59 @@ class MailchimpShell extends Shell
         $today = date_format(new \DateTime(), 'Y-m-d');
         $expirationDate = date_format(new \DateTime("- $numDaysExpiration days"), 'Y-m-d');
 
-        // Memberships expired in that date
-        $membersExpiring = $this->Members->find('all')
-            ->matching('Memberships', function ($q) use ($expirationDate) {
-                return $q->where([
-                    'Memberships.expires_on >=' => $expirationDate . ":00:00:00",
-                    'Memberships.expires_on <=' => $expirationDate . ":23:59:59"
-                ]);
-            });
+        // Organizations with members that expired in that date
+        $organizations = $this->Organizations->find('all')
+            ->where([
+                'Organizations.mailchimp_api_key IS NOT NULL',
+                'Organizations.mailchimp_active_members_list IS NOT NULL'
+            ])
+            ->contain(['Members' => function ($q1) use ($expirationDate) {
+                return $q1->matching('Memberships', function($q2) use ($expirationDate) {
+                    return $q2->where([
+                        'Memberships.expires_on >=' => $expirationDate . ":00:00:00",
+                        'Memberships.expires_on <=' => $expirationDate . ":23:59:59"
+                    ]);
+                });
+            }])
+            ->distinct();
 
-        $mailchimpKey = Configure::read('App.mailchimpKey');
-        $listId = "eaad0ec6e1";
-        $unsubscribeOperations = [];
+        // Execute only one batch operation per organization
+        foreach ($organizations as $organization) {
+            $unsubscribeOperations = [];
+            $listId = $organization->mailchimp_active_members_list;
 
-        foreach ($membersExpiring as $member) {
-            // Member does not have an active membership now
-            if ($member->has_active_membership == false) {
-                $subscriberHash = md5(strtolower($member->email));
+            foreach ($organization->members as $member) {
+                // If member does not have an active membership now
+                if ($member->has_active_membership == false) {
+                    $subscriberHash = md5(strtolower($member->email));
 
-                // Add operation to batch request
-                array_push($unsubscribeOperations, [
-                    "method" => "PATCH",
-                    "path" => "lists/$listId/members/$subscriberHash",
-                    "body" => json_encode([
-                        "status" => "unsubscribed",
-                        "merge_fields" => [
-                            "EXP_ON" => $expirationDate
-                        ]
-                    ])
-                ]);
+                    // Add operation to batch request
+                    array_push($unsubscribeOperations, [
+                        "method" => "PATCH",
+                        "path" => "lists/$listId/members/$subscriberHash",
+                        "body" => json_encode([
+                            "status" => "unsubscribed",
+                            "merge_fields" => [
+                                "EXP_ON" => $expirationDate
+                            ]
+                        ])
+                    ]);
+                }
             }
-        }
 
-        // Send batch request
-        $mc = new Mailchimp($mailchimpKey);
+            // Send batch request
+            $mc = new Mailchimp($organization->mailchimp_api_key);
 
-        try {
-            $mc->post("batches", [
-                "operations" => $unsubscribeOperations
-            ]);
-        } catch (Exception $e) {
-            if ($e->getMessage()) {
-                $this->error = $e->getMessage();
-            } else {
-                $this->error = 'An unknown error occurred when unsubscribing members in Mailchimp.';
+            try {
+                $mc->post("batches", [
+                    "operations" => $unsubscribeOperations
+                ]);
+            } catch (Exception $e) {
+                if ($e->getMessage()) {
+                    $this->error = $e->getMessage();
+                } else {
+                    $this->error = 'An unknown error occurred when unsubscribing members in Mailchimp.';
+                }
             }
         }
     }

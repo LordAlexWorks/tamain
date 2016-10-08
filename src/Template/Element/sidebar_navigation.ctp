@@ -156,11 +156,11 @@
                     </li>
                     <li>
                         <a href="<?php echo $this->Url->build([
-                            'controller' => 'Users',
-                            'action' => 'index'
+                            'controller' => 'Organizations',
+                            'action' => 'configure-mailchimp'
                             ]); ?>"
-                            class="<?php echo $this->request->controller == 'Users' 
-                                    && $this->request->action == 'index'? 'active' : ''; ?>"
+                            class="<?php echo $this->request->controller == 'Organizations' 
+                                    && $this->request->action == 'configure-mailchimp'? 'active' : ''; ?>"
                             >
                             <?= __("Configure Mailchimp") ?>
                         </a>
