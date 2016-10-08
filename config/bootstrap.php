@@ -221,10 +221,3 @@ Type::build('date')
     ->useImmutable();
 Type::build('datetime')
     ->useImmutable();
-
-/**
- * Mailchimp Key
- */
-if (!Configure::read('App.mailchimpKey')) {
-    Configure::write('App.mailchimpKey', env('MAILCHIMP_KEY', "c6c940cca490d1d192cd5f4d5a5bc655-us13"));
-}

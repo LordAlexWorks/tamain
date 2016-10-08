@@ -144,16 +144,24 @@ lobobot+tamarinAdmin@lordalexworks.com
 lordalexworks
 
 ### Mailchimp account
-lobobot+tamarinAdmin@lordalexworks.com
-@Lordalexworks0406
+Username: tamarinadmin
+Password: @Lordalexworks0406
+Email: lobobot+tamarinAdmin@lordalexworks.com
 
 > **Security questions:**
+>
 > Name of your first employer?
+>
 > LoBo
+>
 > What kind of coffee do we serve in the office?
+>
 > None
+>
 > What brand of coffee maker do you use in the office?
+>
 > None
+>
 
 ### Email address of imported members
 

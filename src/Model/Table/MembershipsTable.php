@@ -119,14 +119,20 @@ class MembershipsTable extends Table
      */
     public function afterSave(Event $event, EntityInterface $entity, \ArrayObject $options)
     {
+        $member = $this->Members->findById($entity->member_id)->contain(['Organizations'])->first();
+
+        // Synchonize mailchimp if it is configured
+        if (!$member->organization || !$member->organization->mailchimp_api_key || !$member->organization->mailchimp_active_members_list) {
+            return;
+        }
+
         $initialDate = $entity->starts_on;
         $expirationDate = $entity->expires_on;
         
-        $member = $this->Members->findById($entity->member_id)->first();
         $subscriberHash = md5(strtolower($member->email));
 
-        $mailchimpKey = Configure::read('App.mailchimpKey');
-        $listId = "eaad0ec6e1";
+        $mailchimpKey = $member->organization->mailchimp_api_key;
+        $listId = $member->organization->mailchimp_active_members_list;
         $mc = new Mailchimp($mailchimpKey);
 
         $membershipsActiveOrRecent = $this->find('all')

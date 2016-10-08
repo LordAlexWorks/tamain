@@ -83,7 +83,6 @@ class AppController extends Controller
 
         $this->loggedInUser = $this->Auth->user();
 
-
         $this->loadModel('Organizations');
         $this->loggedInUser['organizations'] = $this->Organizations->find('all')
             ->matching('Users', function ($q) {
@@ -93,10 +92,13 @@ class AppController extends Controller
 
         // Current organization
         $currentOrganizationId = $this->request->session()->read('CurrentOrganizationId');
+        $this->currentOrganization = null;
+        
         if ($currentOrganizationId) {
             $this->currentOrganization = $this->Organizations->findById($currentOrganizationId)->first();
         }
-        else {
+
+        if (!$this->currentOrganization) {
             if (($this->request->params['controller'] == 'Organizations') 
                 && ($this->request->params['action'] == 'choose')) {
                 return;
